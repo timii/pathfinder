@@ -1,13 +1,16 @@
 <script lang="ts">
-    const fieldObject = {
+    import type { Field } from '../types/Field'
+
+    const fieldObject: Field = {
         start: false,
         finish: false,
-        wall: false
+        wall: false,
+        walkedOver: false
     }
     const rows = 5
     const cols = 5
-    const numOfFields = rows * cols;
-    const fields = new Array(numOfFields)
+    const numOfFields: number = rows * cols;
+    const fields = new Array<Field>(numOfFields)
     fields.fill(fieldObject)
     console.log("fields:", fields)
 </script>
