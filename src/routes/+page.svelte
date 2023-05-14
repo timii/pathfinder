@@ -1,5 +1,24 @@
-<h1 class="text-3xl font-bold underline">Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script lang="ts">
+    const fieldObject = {
+        start: false,
+        finish: false,
+        wall: false
+    }
+    const rows = 5
+    const cols = 5
+    const numOfFields = rows * cols;
+    const fields = new Array(numOfFields)
+    fields.fill(fieldObject)
+    console.log("fields:", fields)
+</script>
+
+    <div>Number of fields: {numOfFields}</div>
+    
+<h2>Field:</h2>
+{#each fields as field, i}
+    <div>field ({i})</div>
+{/each}
+
 
 <style lang="postcss">
     :global(html) {
