@@ -7,8 +7,8 @@
         wall: false,
         walkedOver: false
     }
-    const rows = 5
-    const cols = 5
+    const rows = 10
+    const cols = 10
     const numOfFields: number = rows * cols;
     const fields = []
     const row = new Array<Field[]>(cols)
@@ -24,13 +24,14 @@
     <div>Number of fields: {numOfFields}</div>
     
 <h2>Fields:</h2>
-<div class="fields-container">
+<div class="fields-container flex gap-1">
 
 {#each fields as row, i}
-    <div class="row">
+    <div class="row flex flex-col gap-1">
 
     {#each row as col, j}
-        <div class="field">field ({i})</div>
+        <!-- <div class="field">field ({i})</div> -->
+        <div class="field hover:cursor-pointer w-8 h-8 border-solid border-gray-400 border"></div>
     {/each}
     </div>
 {/each}
@@ -41,18 +42,8 @@
     :global(html) {
         background-color: theme(colors.zinc.900);
         color: theme(colors.neutral.50);
-    }
-
-    .fields-container {
         display: flex;
         flex-direction: column;
-    }
-
-    .row {
-        display: flex;
-    }
-
-    .field {
-        width: 100px;
+        align-items: center;
     }
 </style>
