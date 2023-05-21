@@ -21,29 +21,25 @@
     console.log("fields:", fields, typeof fields, "row:", row, typeof fields[0])
 </script>
 
-    <div>Number of fields: {numOfFields}</div>
+
+<main class="flex flex-col items-center text-white bg-zinc-900 h-screen font-sans font-lg font-semibold">
+
+<div>Number of fields: {numOfFields}</div>
     
 <h2>Fields:</h2>
-<div class="fields-container flex gap-1">
+<div class="flex gap-1">
 
 {#each fields as row, i}
-    <div class="row flex flex-col gap-1">
+    <div class="flex flex-col gap-1">
 
     {#each row as col, j}
-        <!-- <div class="field">field ({i})</div> -->
         <div class="field hover:cursor-pointer w-8 h-8 border-solid border-gray-400 border"></div>
     {/each}
     </div>
 {/each}
 </div>
+</main>
 
 
 <style lang="postcss">
-    :global(html) {
-        background-color: theme(colors.zinc.900);
-        color: theme(colors.neutral.50);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
 </style>
