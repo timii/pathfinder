@@ -1,4 +1,4 @@
-export interface Field {
+export interface IField {
     start: boolean;
     finish: boolean;
     wall: boolean;
