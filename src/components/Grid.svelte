@@ -6,7 +6,7 @@
     console.log("algorithms:", algorithms, algorithms[0].functionCallback());
 
     const fieldObject: IField = {
-        start: true,
+        start: false,
         finish: false,
         wall: false,
         walkedOver: false,
