@@ -1,5 +1,14 @@
 <script lang="ts">
+    import { selectedNodeType } from "../store/store";
+
+    const nodeColorMap = new Map<string, string>([
+        ["wall", "blue"],
+        ["start", "green"],
+        ["finish", "red"],
+    ]);
+
     let color = "white";
+    let nodeType = "";
     export let props = {
         start: false,
         finish: false,
@@ -18,9 +27,18 @@
         props.walkedOver
     );
     function handleClick() {
-        console.log("handleClick called before:", props);
+        nodeType = $selectedNodeType;
+        console.log(
+            "handleClick called before:",
+            props,
+            "selectedNodeType:",
+            nodeType,
+            "color",
+            nodeColorMap.get(nodeType)
+        );
         props.start = true;
-        color = "red";
+        color = nodeColorMap.get(nodeType);
+        // color = "red";
         console.log("handleClick called after:", props);
     }
 </script>
