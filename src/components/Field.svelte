@@ -27,19 +27,27 @@
         props.walkedOver
     );
     function handleClick() {
-        nodeType = $selectedNodeType;
-        console.log(
-            "handleClick called before:",
-            props,
-            "selectedNodeType:",
-            nodeType,
-            "color",
-            nodeColorMap.get(nodeType)
-        );
-        props.start = true;
-        color = nodeColorMap.get(nodeType);
-        // color = "red";
-        console.log("handleClick called after:", props);
+        if (color !== "white") {
+            console.log("in if -> color:", color);
+            color = "white";
+        } else {
+            console.log("in else -> color:", color);
+            nodeType = $selectedNodeType;
+            console.log(
+                "handleClick called before:",
+                props,
+                "selectedNodeType:",
+                nodeType,
+                "color",
+                nodeColorMap.get(nodeType)
+            );
+            props.start = true;
+            color = nodeColorMap.get(nodeType)
+                ? nodeColorMap.get(nodeType)!
+                : "white";
+            // color = "red";
+            console.log("handleClick called after:", props);
+        }
     }
 </script>
 
