@@ -1,12 +1,18 @@
 import { writable } from 'svelte/store';
 
-function createSelectedNodeType() {
-    const { subscribe, set } = writable("");
+// Generic function to create store variables 
+function createStoreValue(startValue: any) {
+    console.log("createStoreValue -> value:", startValue, typeof startValue)
+    const { subscribe, set } = writable(startValue);
 
     return {
         subscribe,
-        set: (value: string) => set(value)
+        set: (value: typeof startValue) => set(value)
     };
 }
 
-export const selectedNodeType = createSelectedNodeType();
+export const selectedNodeType = createStoreValue("");
+
+export const isStartNodeSet = createStoreValue(false);
+export const isFinishNodeSet = createStoreValue(false);
+
