@@ -18,6 +18,7 @@
         ["wall", "blue"],
         ["start", "green"],
         ["finish", "red"],
+        ["default", "white"],
     ]);
 
     let color = "white";
@@ -55,14 +56,15 @@
         // only handle click if node is not a start or finish node
         if (!props.start && !props.finish) {
             // left mouse click -> node is changed to a wall
-            if (event.button === 0) {
+            if (event.buttons === 1) {
                 console.log("left mouse clicked");
+                color = nodeColorMap.get("wall")!;
             }
 
             // right mouse click -> node is reset to starting color
             if (event.button === 2) {
                 console.log("right mouse clicked");
-                // stop context menu from opening when right clicking on node
+                color = nodeColorMap.get("default")!;
             }
         }
 
@@ -114,6 +116,22 @@
         // setStoreValue();
     }
 
+    // function to handle dragging mouse over multiple fields while holding left or right button
+    function handleMouseEnter(event: MouseEvent) {
+        if (!props.start && !props.finish) {
+            // console.log("handleMouseEnter -> event:", event);
+            if (event.buttons === 1) {
+                console.log("mouse enter with left click");
+                color = nodeColorMap.get("wall")!;
+            }
+
+            if (event.buttons === 2) {
+                console.log("mouse enter with right click");
+                color = nodeColorMap.get("default")!;
+            }
+        }
+    }
+
     // function to avoid opening context menu when right clicking on node
     function handleContextmenu(event: MouseEvent) {
         console.log("handleContextmenu -> event:", event);
@@ -156,6 +174,7 @@
 <div
     on:mousedown={handleClick}
     on:contextmenu={handleContextmenu}
+    on:mouseenter={handleMouseEnter}
     class="field hover:cursor-pointer w-8 h-8 border-solid border-gray-400 border"
     style="background-color: {color}; cursor: {startOrFinishNode
         ? 'default'
