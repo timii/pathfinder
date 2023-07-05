@@ -23,6 +23,7 @@
     let color = "white";
     let nodeType = "";
     let nodeSet = props.start || props.finish || props.walkedOver || props.wall;
+    let startOrFinishNode = props.start || props.finish;
 
     console.log(
         "props -> start:",
@@ -37,8 +38,16 @@
     );
 
     onMount(() => {
+        nodeType = $selectedNodeType;
+
         // check if start or finish value is true in props to then change color accordingly
-        console.log("onMount called -> props:", props);
+        // console.log("onMount called -> props:", props);
+        if (props.start) {
+            color = nodeColorMap.get("start")!;
+        }
+        if (props.finish) {
+            color = nodeColorMap.get("finish")!;
+        }
     });
 
     function handleClick(event: MouseEvent) {
@@ -53,6 +62,7 @@
             // right mouse click -> node is reset to starting color
             if (event.button === 2) {
                 console.log("right mouse clicked");
+                // stop context menu from opening when right clicking on node
             }
         }
 
@@ -104,6 +114,12 @@
         // setStoreValue();
     }
 
+    // function to avoid opening context menu when right clicking on node
+    function handleContextmenu(event: MouseEvent) {
+        console.log("handleContextmenu -> event:", event);
+        event.preventDefault();
+    }
+
     function setStoreValue() {
         console.log(
             "setStoreValue before -> nodeType:",
@@ -137,11 +153,13 @@
     }
 </script>
 
-<!-- on:click={handleClick} -->
 <div
     on:mousedown={handleClick}
+    on:contextmenu={handleContextmenu}
     class="field hover:cursor-pointer w-8 h-8 border-solid border-gray-400 border"
-    style="background-color: {color};"
+    style="background-color: {color}; cursor: {startOrFinishNode
+        ? 'default'
+        : 'pointer'};"
 />
 
 <style lang="postcss">
