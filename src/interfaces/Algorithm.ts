@@ -1,4 +1,4 @@
 export interface IAlgorithm {
     name: string;
-    functionCallback: () => number[];
+    functionCallback?: () => number[];
 }

@@ -3,7 +3,13 @@ import { aStar } from "./a-star";
 
 export const algorithms: IAlgorithm[] = [
     {
-        name: "testName",
+        name: "testName1",
         functionCallback: aStar,
+    },
+    {
+        name: "testName2",
+    },
+    {
+        name: "testName3",
     },
 ];

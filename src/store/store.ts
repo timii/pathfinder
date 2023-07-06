@@ -12,6 +12,7 @@ function createStoreValue(startValue: any) {
 }
 
 export const selectedNodeType = createStoreValue("");
+export const selectedAlgo = createStoreValue("");
 
 export const isStartNodeSet = createStoreValue(false);
 export const isFinishNodeSet = createStoreValue(false);

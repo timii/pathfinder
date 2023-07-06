@@ -1,4 +1,5 @@
 <script lang="ts">
+    import AlgoSelector from "../components/AlgoSelector.svelte";
     import Grid from "../components/Grid.svelte";
     import NodeSelector from "../components/NodeSelector.svelte";
 </script>
@@ -8,6 +9,7 @@
 >
     <Grid />
 
+    <AlgoSelector />
     <!-- <NodeSelector /> -->
 </main>
 
