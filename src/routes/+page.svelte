@@ -8,7 +8,7 @@
 >
     <Grid />
 
-    <NodeSelector />
+    <!-- <NodeSelector /> -->
 </main>
 
 <style lang="postcss">
