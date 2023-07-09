@@ -3,7 +3,10 @@
     import type { IAlgorithm } from "../interfaces/Algorithm";
     import { selectedAlgo } from "../store/store";
 
-    let selected: IAlgorithm;
+    // initially select first algorithm
+    // TODO: add check later if algorithm is already set in localStorage
+    let selected: IAlgorithm = algorithms[0];
+    selectedAlgo.set(selected.name);
 
     function onChange(event: Event) {
         // selected = (event.target as HTMLInputElement).value;
@@ -12,7 +15,8 @@
     }
 </script>
 
-<div>
+<div class="flex flex-row gap-2">
+    <p>Select an algorithm:</p>
     <select class="text-black" bind:value={selected} on:change={onChange}>
         {#each algorithms as algo}
             <option value={algo}>
