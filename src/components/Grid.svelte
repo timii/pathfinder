@@ -1,9 +1,18 @@
 <script lang="ts">
     import { algorithms } from "../algorithms/algorithms";
     import type { IField } from "../interfaces/Field";
+    import { currentGrid } from "../store/store";
     import Field from "./Field.svelte";
 
-    console.log("algorithms:", algorithms, algorithms[0].functionCallback());
+    if (algorithms[0].functionCallback) {
+        console.log(
+            "algorithms:",
+            algorithms
+            // algorithms[0].functionCallback()
+        );
+    } else {
+        console.log("algorithms:", algorithms);
+    }
 
     const fieldObject: IField = {
         start: false,
@@ -17,11 +26,24 @@
 
     // source: https://stackoverflow.com/a/68966725
     // create 2d array of fields with cols * rows amount of elements.
-    // it creates a new reference of an array for each index to avoid
-    // that every array is the same reference
-    const fields: IField[][] = Array.from({ length: rows }, (_) =>
-        new Array(cols).fill(fieldObject)
-    );
+    // it creates a new reference of an array and a new reference of fieldObject
+    // for each index to avoid that every array or fieldObject is the same reference
+    // const fields: IField[][] = Array.from({ length: rows }, (_) =>
+    //     new Array(cols).fill({ ...fieldObject })
+    // );
+    // const fields: IField[][] = Array.from({ length: rows }, (_) =>
+    // new Array(cols).fill(fieldObject)
+    // );
+
+    // workaround to manually add all fields without objects being the same reference.
+    // creates 2d array of fields with cols * rows amount of elements
+    let fields: IField[][] = [];
+    for (let i = 0; i < rows; i++) {
+        fields[i] = [];
+        for (let j = 0; j < cols; j++) {
+            fields[i][j] = JSON.parse(JSON.stringify(fieldObject));
+        }
+    }
 
     console.log(
         "fields before:",
@@ -33,7 +55,9 @@
         "fields[1][1]:",
         fields[1][1],
         "fields[8][8]:",
-        fields[8][8]
+        fields[8][8],
+        "currentGrid",
+        $currentGrid
     );
 
     // set a fixed start and finsish field
@@ -50,18 +74,22 @@
         "fields[1][1]:",
         fields[1][1],
         "fields[8][8]:",
-        fields[8][8]
+        fields[8][8],
+        "currentGrid",
+        $currentGrid
     );
+
+    currentGrid.set(fields);
 </script>
 
 <div>Number of fields: {numOfFields}</div>
 
 <h2>Fields:</h2>
-<div class="flex gap-1">
+<div class="flex flex-col gap-1">
     {#each fields as row, i}
-        <div class="flex flex-col gap-1">
+        <div class="flex flex-row gap-1">
             {#each row as col, j}
-                <Field props={col} />
+                <Field fieldData={col} firstIndex={i} secondIndex={j} />
             {/each}
         </div>
     {/each}

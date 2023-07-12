@@ -11,7 +11,7 @@ function createStoreValue(startValue: any) {
     };
 }
 
-export const currentGrid = createStoreValue([]);
+export const currentGrid = createStoreValue([[]]);
 
 export const selectedNodeType = createStoreValue("");
 export const selectedAlgo = createStoreValue("");

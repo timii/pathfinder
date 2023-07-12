@@ -1,18 +1,16 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import type { IField, IFieldProp } from "../interfaces/Field";
-    import {
-        isFinishNodeSet,
-        isStartNodeSet,
-        selectedNodeType,
-    } from "../store/store";
+    import { currentGrid } from "../store/store";
 
-    export let props = {
+    export let fieldData = {
         start: false,
         finish: false,
         wall: false,
         walkedOver: false,
     };
+    export let firstIndex: number;
+    export let secondIndex: number;
 
     const nodeColorMap = new Map<string, string>([
         ["wall", "blue"],
@@ -23,48 +21,76 @@
 
     let color = "white";
     let nodeType = "";
-    let nodeSet = props.start || props.finish || props.walkedOver || props.wall;
-    let startOrFinishNode = props.start || props.finish;
+    let nodeSet =
+        fieldData.start ||
+        fieldData.finish ||
+        fieldData.walkedOver ||
+        fieldData.wall;
+    let startOrFinishNode = fieldData.start || fieldData.finish;
 
     console.log(
-        "props -> start:",
-        props.start,
+        "fieldData -> start:",
+        fieldData.start,
         "finish:",
-        props.finish,
+        fieldData.finish,
         "wall:",
-        props.wall,
+        fieldData.wall,
         "walkedOver:",
-        props.walkedOver,
+        fieldData.walkedOver,
+        "firstIndex:",
+        firstIndex,
+        "secondIndex:",
+        secondIndex,
         "\n----------------------------------------------------------------"
     );
 
     onMount(() => {
-        nodeType = $selectedNodeType;
+        // nodeType = $selectedNodeType;
 
-        // check if start or finish value is true in props to then change color accordingly
-        // console.log("onMount called -> props:", props);
-        if (props.start) {
+        // check if start or finish value is true in fieldData to then change color accordingly
+        // console.log("onMount called -> fieldData:", fieldData);
+        if (fieldData.start) {
             color = nodeColorMap.get("start")!;
         }
-        if (props.finish) {
+        if (fieldData.finish) {
             color = nodeColorMap.get("finish")!;
         }
     });
 
+    // function to write the grid with the changed field into the store
+    function setGrid(value: boolean) {
+        const grid: IField[][] = $currentGrid;
+        const gridField = grid[firstIndex][secondIndex];
+
+        grid[firstIndex][secondIndex] = {
+            ...gridField,
+            wall: value,
+        };
+
+        currentGrid.set(grid);
+    }
+
+    function changeFieldData(fieldProp: IFieldProp, value: boolean) {
+        fieldData[fieldProp] = value;
+        setGrid(value);
+    }
+
     function handleClick(event: MouseEvent) {
         console.log("handleClick called -> event:", event);
         // only handle click if node is not a start or finish node
-        if (!props.start && !props.finish) {
+        if (!fieldData.start && !fieldData.finish) {
             // left mouse click -> node is changed to a wall
             if (event.buttons === 1) {
                 console.log("left mouse clicked");
                 color = nodeColorMap.get("wall")!;
+                changeFieldData("wall", true);
             }
 
             // right mouse click -> node is reset to starting color
             if (event.button === 2) {
                 console.log("right mouse clicked");
                 color = nodeColorMap.get("default")!;
+                changeFieldData("wall", false);
             }
         }
 
@@ -75,9 +101,9 @@
         //     console.log("in if -> color:", color);
         //     color = "white";
         //     nodeSet = !nodeSet;
-        //     // Set all props to false when clicked again
-        //     Object.keys(props).forEach((key) => {
-        //         props[key as IFieldProp] = false;
+        //     // Set all fieldData to false when clicked again
+        //     Object.keys(fieldData).forEach((key) => {
+        //         fieldData[key as IFieldProp] = false;
         //     });
         //     // And set color of field to new color
         //     color = nodeColorMap.get(nodeType)
@@ -85,7 +111,7 @@
         //         : "white";
         //     console.log(
         //         "handleClick called after:",
-        //         props,
+        //         fieldData,
         //         "selectedNodeType:",
         //         nodeType,
         //         "color",
@@ -96,18 +122,18 @@
         //     nodeSet = !nodeSet;
         //     nodeType = $selectedNodeType;
         //     // Dynamically set prop value to true
-        //     props[nodeType as IFieldProp] = true;
+        //     fieldData[nodeType as IFieldProp] = true;
         //     console.log(
         //         "handleClick called after:",
-        //         props,
+        //         fieldData,
         //         "selectedNodeType:",
         //         nodeType,
         //         "color",
         //         nodeColorMap.get(nodeType)
         //     );
-        //     // Object.keys(props).forEach((key) => {
+        //     // Object.keys(fieldData).forEach((key) => {
         //     //     console.log(node)
-        //     //     props[key as IFieldProp] = nodeType === key ? true : false;
+        //     //     fieldData[key as IFieldProp] = nodeType === key ? true : false;
         //     // });
         //     color = nodeColorMap.get(nodeType)
         //         ? nodeColorMap.get(nodeType)!
@@ -118,16 +144,18 @@
 
     // function to handle dragging mouse over multiple fields while holding left or right button
     function handleMouseEnter(event: MouseEvent) {
-        if (!props.start && !props.finish) {
+        if (!fieldData.start && !fieldData.finish) {
             // console.log("handleMouseEnter -> event:", event);
             if (event.buttons === 1) {
                 console.log("mouse enter with left click");
                 color = nodeColorMap.get("wall")!;
+                changeFieldData("wall", true);
             }
 
             if (event.buttons === 2) {
                 console.log("mouse enter with right click");
                 color = nodeColorMap.get("default")!;
+                changeFieldData("wall", false);
             }
         }
     }
@@ -138,37 +166,37 @@
         event.preventDefault();
     }
 
-    function setStoreValue() {
-        console.log(
-            "setStoreValue before -> nodeType:",
-            $selectedNodeType,
-            typeof $selectedNodeType,
-            "isStartNodeSet:",
-            $isStartNodeSet,
-            "isFinishNodeSet:",
-            $isFinishNodeSet
-        );
+    // function setStoreValue() {
+    //     console.log(
+    //         "setStoreValue before -> nodeType:",
+    //         $selectedNodeType,
+    //         typeof $selectedNodeType,
+    //         "isStartNodeSet:",
+    //         $isStartNodeSet,
+    //         "isFinishNodeSet:",
+    //         $isFinishNodeSet
+    //     );
 
-        switch ($selectedNodeType) {
-            case "start":
-                isStartNodeSet.set(nodeSet);
-                break;
-            case "finish":
-                isFinishNodeSet.set(nodeSet);
-                break;
-            default:
-                break;
-        }
+    //     switch ($selectedNodeType) {
+    //         case "start":
+    //             isStartNodeSet.set(nodeSet);
+    //             break;
+    //         case "finish":
+    //             isFinishNodeSet.set(nodeSet);
+    //             break;
+    //         default:
+    //             break;
+    //     }
 
-        console.log(
-            "setStoreValue after -> nodeType:",
-            $selectedNodeType,
-            "isStartNodeSet:",
-            $isStartNodeSet,
-            "isFinishNodeSet:",
-            $isFinishNodeSet
-        );
-    }
+    //     console.log(
+    //         "setStoreValue after -> nodeType:",
+    //         $selectedNodeType,
+    //         "isStartNodeSet:",
+    //         $isStartNodeSet,
+    //         "isFinishNodeSet:",
+    //         $isFinishNodeSet
+    //     );
+    // }
 </script>
 
 <div
