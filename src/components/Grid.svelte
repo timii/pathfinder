@@ -53,7 +53,7 @@
         "total number of fields:",
         cols * rows,
         "fields[1][1]:",
-        fields[1][1],
+        fields[1][5],
         "fields[8][8]:",
         fields[8][8],
         "currentGrid",
@@ -61,7 +61,7 @@
     );
 
     // set a fixed start and finsish field
-    fields[1][1] = { ...fields[1][1], start: true };
+    fields[1][5] = { ...fields[1][5], start: true };
     fields[8][8] = { ...fields[8][8], finish: true };
 
     console.log(
@@ -71,8 +71,8 @@
         // row,
         "total number of fields:",
         cols * rows,
-        "fields[1][1]:",
-        fields[1][1],
+        "fields[1][5]:",
+        fields[1][5],
         "fields[8][8]:",
         fields[8][8],
         "currentGrid",

@@ -1,19 +1,15 @@
-import type { IField } from "../interfaces/Field";
+import type { IField, IFieldProp } from "../interfaces/Field";
 
-// function to return the indeces of the starting field
-export function getStartPosition(grid: IField[][]) {
-    console.log("getStartPosition -> grid:", grid)
-    const start = grid.find(row => {
-        row.find(field => field.start === true)
-    })
-    console.log("getStartPosition -> start:", start)
-}
-
-// function to return the indeces of the finish field
-export function getFinsishPosition(grid: IField[][]) {
-    console.log("getFinsishPosition -> grid:", grid)
-    const finish = grid.find(row => {
-        row.find(field => field.finish === true)
-    })
-    console.log("getStartPosition -> finish:", finish)
+// function to return the indeces of a given field
+export function getFieldPosition(grid: IField[][], property: IFieldProp): { firstIndex: number, secondIndex: number } | undefined {
+    console.log("getFieldPosition -> grid:", grid)
+    for (var i = 0; i < grid.length; i++) {
+        var index = grid[i].findIndex(field => field[property] === true);
+        if (index > -1) {
+            let start = { firstIndex: i, secondIndex: index };
+            console.log("getFieldPosition -> start in for loop:", start)
+            return start
+        }
+    }
+    return undefined
 }
