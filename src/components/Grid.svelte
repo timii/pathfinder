@@ -18,7 +18,8 @@
         start: false,
         finish: false,
         wall: false,
-        walkedOver: false,
+        searched: false,
+        path: false,
     };
     const rows = 10;
     const cols = 10;
@@ -63,6 +64,8 @@
     // set a fixed start and finsish field
     fields[1][5] = { ...fields[1][5], start: true };
     fields[8][8] = { ...fields[8][8], finish: true };
+    fields[1][1] = { ...fields[1][1], searched: true };
+    fields[7][0] = { ...fields[7][0], path: true };
 
     console.log(
         "fields after:",
@@ -86,7 +89,7 @@
 
 <h2>Fields:</h2>
 <div class="flex flex-col gap-1">
-    {#each fields as row, i}
+    {#each $currentGrid as row, i}
         <div class="flex flex-row gap-1">
             {#each row as col, j}
                 <Field fieldData={col} firstIndex={i} secondIndex={j} />

@@ -1,61 +1,91 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { afterUpdate, onMount } from "svelte";
     import type { IField, IFieldProp } from "../interfaces/Field";
     import { currentGrid } from "../store/store";
 
-    export let fieldData = {
+    export let fieldData: IField = {
         start: false,
         finish: false,
         wall: false,
-        walkedOver: false,
+        searched: false,
+        path: false,
     };
     export let firstIndex: number;
     export let secondIndex: number;
 
     const nodeColorMap = new Map<string, string>([
-        ["wall", "blue"],
-        ["start", "green"],
-        ["finish", "red"],
-        ["default", "white"],
+        ["wall", "#0000FF"],
+        ["start", "#00FF00"],
+        ["finish", "#FF0000"],
+        ["searched", "#FFFF00"],
+        ["path", "#db9409"],
+        ["default", "#FFFFFF"],
     ]);
 
-    let color = "white";
+    let color = "";
     let nodeType = "";
     let nodeSet =
         fieldData.start ||
         fieldData.finish ||
-        fieldData.walkedOver ||
+        fieldData.searched ||
         fieldData.wall;
     let startOrFinishNode = fieldData.start || fieldData.finish;
 
-    console.log(
-        "fieldData -> start:",
-        fieldData.start,
-        "finish:",
-        fieldData.finish,
-        "wall:",
-        fieldData.wall,
-        "walkedOver:",
-        fieldData.walkedOver,
-        "firstIndex:",
-        firstIndex,
-        "secondIndex:",
-        secondIndex,
-        "\n----------------------------------------------------------------"
-    );
+    // console.log(
+    //     "fieldData -> start:",
+    //     fieldData.start,
+    //     "finish:",
+    //     fieldData.finish,
+    //     "wall:",
+    //     fieldData.wall,
+    //     "searched:",
+    //     fieldData.searched,
+    //     "firstIndex:",
+    //     firstIndex,
+    //     "secondIndex:",
+    //     secondIndex,
+    //     "\n----------------------------------------------------------------"
+    // );
+
+    afterUpdate(() => {
+        console.log("afterUpdate called -> fieldData:", fieldData);
+        setFieldColor();
+    });
 
     onMount(() => {
+        setFieldColor();
+    });
+
+    function setFieldColor() {
         // nodeType = $selectedNodeType;
 
         // check if start or finish value is true in fieldData to then change color accordingly
         // console.log("onMount called -> fieldData:", fieldData);
+        if (
+            !fieldData.start &&
+            !fieldData.finish &&
+            !fieldData.searched &&
+            !fieldData.path &&
+            !fieldData.wall
+        ) {
+            color = nodeColorMap.get("default")!;
+        }
         if (fieldData.start) {
             color = nodeColorMap.get("start")!;
         }
         if (fieldData.finish) {
             color = nodeColorMap.get("finish")!;
         }
-    });
+        if (fieldData.wall) {
+            color = nodeColorMap.get("wall")!;
+        }
+        if (fieldData.searched) {
+            color = nodeColorMap.get("searched")!;
+        }
+        if (fieldData.path) {
+            color = nodeColorMap.get("path")!;
+        }
+    }
 
     // function to write the grid with the changed field into the store
     function setGrid(value: boolean) {

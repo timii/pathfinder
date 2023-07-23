@@ -2,8 +2,8 @@
 //     [start: string]: boolean;
 //     [finish: string]: boolean;
 //     wall: boolean;
-//     walkedOver: boolean;
+//     searched: boolean;
 // }
-export type IFieldProp = 'start' | 'finish' | 'wall' | 'walkedOver'
+export type IFieldProp = 'start' | 'finish' | 'wall' | 'searched' | 'path'
 
 export type IField = { [key in IFieldProp]: boolean }
