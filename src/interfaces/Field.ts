@@ -6,4 +6,5 @@
 // }
 export type IFieldProp = 'start' | 'finish' | 'wall' | 'searched' | 'path'
 
-export type IField = { [key in IFieldProp]: boolean }
+// intersection type combines the IFieldProps with the additional id 
+export type IField = { [key in IFieldProp]: boolean } & { id: number }

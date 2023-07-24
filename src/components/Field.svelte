@@ -4,6 +4,7 @@
     import { currentGrid } from "../store/store";
 
     export let fieldData: IField = {
+        id: 0,
         start: false,
         finish: false,
         wall: false,

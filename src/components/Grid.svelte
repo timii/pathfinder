@@ -1,5 +1,6 @@
 <script lang="ts">
     import { algorithms } from "../algorithms/algorithms";
+    import { getRandomInt } from "../algorithms/utils";
     import type { IField } from "../interfaces/Field";
     import { currentGrid } from "../store/store";
     import Field from "./Field.svelte";
@@ -15,6 +16,7 @@
     }
 
     const fieldObject: IField = {
+        id: 0,
         start: false,
         finish: false,
         wall: false,
@@ -42,7 +44,12 @@
     for (let i = 0; i < rows; i++) {
         fields[i] = [];
         for (let j = 0; j < cols; j++) {
-            fields[i][j] = JSON.parse(JSON.stringify(fieldObject));
+            fields[i][j] = JSON.parse(
+                JSON.stringify({
+                    ...fieldObject,
+                    id: getRandomInt(1, 999999),
+                } as IField)
+            );
         }
     }
 
@@ -64,8 +71,8 @@
     // set a fixed start and finsish field
     fields[1][5] = { ...fields[1][5], start: true };
     fields[8][8] = { ...fields[8][8], finish: true };
-    fields[1][1] = { ...fields[1][1], searched: true };
-    fields[7][0] = { ...fields[7][0], path: true };
+    // fields[1][1] = { ...fields[1][1], searched: true };
+    // fields[7][0] = { ...fields[7][0], path: true };
 
     console.log(
         "fields after:",
