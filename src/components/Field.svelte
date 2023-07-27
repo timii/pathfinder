@@ -49,7 +49,7 @@
     // );
 
     afterUpdate(() => {
-        console.log("afterUpdate called -> fieldData:", fieldData);
+        // console.log("afterUpdate called -> fieldData:", fieldData);
         setFieldColor();
     });
 
