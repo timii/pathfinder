@@ -1,4 +1,5 @@
 import type { IField } from "../interfaces/Field";
+import type { IPosition } from "../interfaces/Position";
 import { currentGrid } from "../store/store";
 import { getAllAdjacentFieldPositions, getFieldPosition, isEveryFieldSearched } from "./utils";
 
@@ -10,16 +11,33 @@ export function bfs(grid: IField[][]) {
     const startNode = getFieldPosition(grid, "start")
     const finishNode = getFieldPosition(grid, "finish")
     if (startNode) {
-        const neighbours = getAllAdjacentFieldPositions(grid, startNode.firstIndex, startNode.secondIndex)
-        console.log("bfs function called -> startNode:", startNode, "finishNode:", finishNode, "colMax:", colMax, "rowMax:", rowMax, "neighbours:", neighbours);
-        if (neighbours.length > 0) {
-            neighbours.forEach(field => grid[field.firstIndex][field.secondIndex].searched = true)
+        let fieldsToCheck: IPosition[] = [startNode]
+        let neighbours: IPosition[] = []
+        let i = 0;
+        while (i < 3) {
+            console.log("in while -> i:", i, "fieldsToCheck:", fieldsToCheck, "neighbours:", neighbours)
+            if (fieldsToCheck.length > 0) {
+
+                // get all the adjacent fields of each field that we have to check
+                fieldsToCheck.forEach(field => neighbours.push(...getAllAdjacentFieldPositions(grid, field.firstIndex, field.secondIndex)))
+
+                // const neighbours = getAllAdjacentFieldPositions(grid, startNode.firstIndex, startNode.secondIndex)
+                console.log("bfs function called -> startNode:", startNode, "finishNode:", finishNode, "neighbours:", neighbours);
+                if (neighbours.length > 0) {
+                    fieldsToCheck = []
+
+                    // new fields to check are the neighbours from the field that we checked
+                    fieldsToCheck.push(...neighbours)
+                    neighbours.forEach(field => grid[field.firstIndex][field.secondIndex].searched = true)
+                }
+                i++;
+                currentGrid.set(grid)
+            }
         }
     }
 
     // let gridTest: IField[][] = JSON.parse(JSON.stringify(grid))
     // grid[0][0].searched = true
-    currentGrid.set(grid)
     console.log("bfs function called -> grid after:", grid, "isEveryFieldSearched:", isEveryFieldSearched(grid));
 
     return [1, 2, 3];
