@@ -20,25 +20,40 @@ export function getRandomInt(min = 1, max: number) {
 }
 
 // function to get all adjacent fields to a given position
-export function getAllNeighbourFieldPositions(grid: IField[][], firstIndex: number, secondIndex: number) {
+export function getAllAdjacentFieldPositions(grid: IField[][], firstIndex: number, secondIndex: number) {
     console.log("getAllNeighbourFields -> grid:", grid, firstIndex, secondIndex)
-    const neighbours = []
+    const neighbours: IPosition[] = []
     const rowMax = grid[0].length
     const colMax = grid.length
 
-    if (isFieldEmtpy(grid, firstIndex - 1, secondIndex)) {
-        neighbours.push(grid[firstIndex - 1][secondIndex])
+    if (isFieldEmtpyAndExist(grid, firstIndex - 1, secondIndex)) {
+        neighbours.push({ firstIndex: firstIndex - 1, secondIndex })
+    }
+    if (isFieldEmtpyAndExist(grid, firstIndex + 1, secondIndex)) {
+        neighbours.push({ firstIndex: firstIndex + 1, secondIndex })
+    }
+    if (isFieldEmtpyAndExist(grid, firstIndex, secondIndex - 1)) {
+        neighbours.push({ firstIndex, secondIndex: secondIndex - 1 })
+    }
+    if (isFieldEmtpyAndExist(grid, firstIndex, secondIndex + 1)) {
+        neighbours.push({ firstIndex, secondIndex: secondIndex + 1 })
     }
 
     console.log("getAllNeighbourFieldPositions -> neighbours:", neighbours)
     return neighbours
 }
 
-function isFieldEmtpy(grid: IField[][], firstIndex: number, secondIndex: number) {
+export function isFieldEmtpyAndExist(grid: IField[][], firstIndex: number, secondIndex: number) {
     const field = grid[firstIndex][secondIndex]
-    console.log("isFieldSearched -> el:", field, firstIndex, secondIndex)
+    console.log("isFieldEmtpyAndExist -> el:", field, firstIndex, secondIndex)
     if (field) {
         console.log("field.searched || field.start || field.finish || field.path:", field.searched || field.start || field.finish || field.path)
         return !(field.searched || field.start || field.finish || field.path)
+    } else {
+        return false
     }
+}
+
+export function isEveryFieldSearched(grid: IField[][]) {
+    return grid.every((row, i) => row.every((_, j) => !isFieldEmtpyAndExist(grid, i, j)))
 }
