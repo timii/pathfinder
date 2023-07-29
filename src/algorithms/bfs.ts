@@ -10,11 +10,14 @@ export function bfs(grid: IField[][]) {
     const colMax = grid.length
     const startNode = getFieldPosition(grid, "start")
     const finishNode = getFieldPosition(grid, "finish")
-    if (startNode) {
+    if (startNode && finishNode) {
         let fieldsToCheck: IPosition[] = [startNode]
         let neighbours: IPosition[] = []
         let i = 0;
-        while (i < 3) {
+
+        const searchInterval = setInterval(() => {
+
+            // while (i < 3) {
             console.log("in while -> i:", i, "fieldsToCheck:", fieldsToCheck, "neighbours:", neighbours)
             if (fieldsToCheck.length > 0) {
 
@@ -26,14 +29,22 @@ export function bfs(grid: IField[][]) {
                 if (neighbours.length > 0) {
                     fieldsToCheck = []
 
-                    // new fields to check are the neighbours from the field that we checked
+                    // new fields to check are the neighbours from the field that we checked before
                     fieldsToCheck.push(...neighbours)
                     neighbours.forEach(field => grid[field.firstIndex][field.secondIndex].searched = true)
                 }
                 i++;
                 currentGrid.set(grid)
+
+                console.log("end of interval -> isEveryFieldSearched(grid):", isEveryFieldSearched(grid))
+
+                // stop checking for fields if every field is not empty
+                if (isEveryFieldSearched(grid)) {
+                    clearInterval(searchInterval)
+                }
             }
-        }
+            // }
+        }, 1000)
     }
 
     // let gridTest: IField[][] = JSON.parse(JSON.stringify(grid))
