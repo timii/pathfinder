@@ -1,5 +1,6 @@
 <script lang="ts">
     import { algorithms } from "../algorithms/algorithms";
+    import type { IField } from "../interfaces/Field";
     import { currentGrid, selectedAlgo } from "../store/store";
 
     console.log("Controls -> selectedAlgo:", $selectedAlgo);
@@ -14,6 +15,17 @@
 
     function clearGrid() {
         console.log("clearGrid called");
+        const grid = $currentGrid;
+        if (grid) {
+            grid.forEach((row: IField[]) => {
+                row.forEach((el: IField) => {
+                    el.searched = false;
+                    el.path = false;
+                    el.wall = false;
+                });
+            });
+            currentGrid.set(grid);
+        }
     }
 </script>
 
