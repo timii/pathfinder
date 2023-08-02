@@ -65,17 +65,21 @@ export function getAllAdjacentFieldPositions(grid: IField[][], firstIndex: numbe
         neighbours.push({ firstIndex: fieldToTheRight[0], secondIndex: fieldToTheRight[1], id: grid[fieldToTheRight[0]][fieldToTheRight[1]].id })
     }
 
-    // console.log("getAllAdjacentFieldPositions -> neighbours:", neighbours)
+    console.log("getAllAdjacentFieldPositions -> neighbours:", neighbours)
     return neighbours
 }
 
 // function to check if a field at given indeces exists and if it's empty 
-export function isFieldEmtpyAndExist(grid: IField[][], firstIndex: number, secondIndex: number) {
+export function isFieldEmtpyAndExist(grid: IField[][], firstIndex: number, secondIndex: number, includeStartAndFinish?: boolean) {
     const field = grid[firstIndex][secondIndex]
     // console.log("isFieldEmtpyAndExist -> el:", field, firstIndex, secondIndex)
     if (field) {
         // console.log("field.searched || field.start || field.finish || field.path:", field.searched || field.start || field.finish || field.path)
-        return !(field.searched || field.path || field.wall)
+        if (includeStartAndFinish) {
+            return !(field.searched || field.path || field.wall || field.start || field.finish)
+        } else {
+            return !(field.searched || field.path || field.wall)
+        }
     } else {
         return false
     }

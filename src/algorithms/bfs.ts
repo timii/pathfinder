@@ -1,7 +1,7 @@
 import type { IField } from "../interfaces/Field";
 import type { IPosition, IPositionWithId } from "../interfaces/Position";
 import { currentGrid } from "../store/store";
-import { drawShortestPath, getAllAdjacentFieldPositions, getFieldPositionById, getFieldPositionByProp, getShortestPath, isEveryFieldSearched } from "./utils";
+import { drawShortestPath, getAllAdjacentFieldPositions, getFieldPositionById, getFieldPositionByProp, getShortestPath, isEveryFieldSearched, isFieldEmtpyAndExist } from "./utils";
 
 // function for the breadth first search algorithm
 export function bfs(grid: IField[][]) {
@@ -14,6 +14,7 @@ export function bfs(grid: IField[][]) {
     let cameFromMap = new Map<number, number>()
     if (startNode && finishNode) {
         let fieldsToCheck: IPositionWithId[] = [startNode]
+        let fieldsToCheckWithoutStartAndFinish: IPositionWithId[] = []
         let neighbours: IPositionWithId[] = []
         let i = 0;
 
@@ -38,10 +39,12 @@ export function bfs(grid: IField[][]) {
                 if (neighbours.length > 0) {
                     fieldsToCheck = []
 
-                    // add neighbours as keys to cameFromMap and use 
-
                     // new fields to check are the neighbours from the field that we checked before
-                    fieldsToCheck.push(...neighbours)
+                    fieldsToCheck = [...neighbours]
+
+                    // create a second array with all neighbours in it, but filter every field out that isn't empty
+                    fieldsToCheckWithoutStartAndFinish = neighbours.filter((el => isFieldEmtpyAndExist(grid, el.firstIndex, el.secondIndex, true)))
+
                     neighbours.forEach(field => {
                         const element = grid[field.firstIndex][field.secondIndex]
                         if (!element.start && !element.finish)
@@ -50,10 +53,10 @@ export function bfs(grid: IField[][]) {
                 }
                 currentGrid.set(grid)
 
-                console.log("end of interval -> isEveryFieldSearched(grid):", isEveryFieldSearched(grid))
+                // console.log("end of interval -> isEveryFieldSearched(grid):", isEveryFieldSearched(grid), " cameFromMap.has(finishNode.id):", cameFromMap.has(finishNode.id), "fieldsToCheckWithoutStartAndFinish.length === 0:", fieldsToCheckWithoutStartAndFinish.length === 0, fieldsToCheckWithoutStartAndFinish)
 
                 // stop checking for fields if every field is not empty or a path to the finish field has been found
-                if (isEveryFieldSearched(grid) || cameFromMap.has(finishNode.id)) {
+                if (isEveryFieldSearched(grid) || cameFromMap.has(finishNode.id) || fieldsToCheckWithoutStartAndFinish.length === 0) {
                     clearInterval(searchInterval)
 
                     // get path from start to finish
