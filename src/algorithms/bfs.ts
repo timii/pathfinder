@@ -1,5 +1,5 @@
 import type { IField } from "../interfaces/Field";
-import type { IPosition, IPositionWithId } from "../interfaces/Position";
+import type { IPositionWithId } from "../interfaces/Position";
 import { currentGrid } from "../store/store";
 import { drawShortestPath, getAllAdjacentFieldPositions, getFieldPositionById, getFieldPositionByProp, getShortestPath, isEveryFieldSearched, isFieldEmtpyAndExist } from "./utils";
 

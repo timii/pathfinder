@@ -1,6 +1,6 @@
 import type { IField, IFieldProp } from "../interfaces/Field";
 import type { IPositionWithId } from "../interfaces/Position";
-import { currentGrid } from "../store/store";
+import { currentGrid, isVisualizing } from "../store/store";
 
 // function to return the indeces of a field using its prop name
 export function getFieldPositionByProp(grid: IField[][], property: IFieldProp): IPositionWithId | undefined {
@@ -117,6 +117,9 @@ export function drawShortestPath(grid: IField[][], path: number[]) {
                     if (!nextField.start && !nextField.finish) {
                         nextField.path = true
                     }
+                }
+                if (path.length === 0) {
+                    isVisualizing.set(false)
                 }
             } else {
                 console.log("clear path interval")

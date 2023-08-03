@@ -1,9 +1,9 @@
 <script lang="ts">
     import { algorithms } from "../algorithms/algorithms";
     import type { IField } from "../interfaces/Field";
-    import { currentGrid, selectedAlgo } from "../store/store";
+    import { currentGrid, isVisualizing, selectedAlgo } from "../store/store";
 
-    console.log("Controls -> selectedAlgo:", $selectedAlgo);
+    // console.log("Controls -> selectedAlgo:", $selectedAlgo);
 
     function startVisualize() {
         const currentAlgo = algorithms.find((el) => el.name === $selectedAlgo);
@@ -11,6 +11,7 @@
         if (currentAlgo && currentAlgo.functionCallback) {
             currentAlgo.functionCallback($currentGrid);
         }
+        isVisualizing.set(true);
     }
 
     function clearGrid() {
@@ -27,13 +28,19 @@
             currentGrid.set(grid);
         }
     }
+
+    // button background: #21242c rgb(33, 36, 44)
+    // button text: #d6dbe5 rgb(214, 219, 229)
+
+    const buttonStyles =
+        "bg-zinc-800 text-zinc-200 rounded-lg leading-none p-2.5 pb-3 shadow-[inset_0_2px_0_0_rgba(63,63,70,0.8)] border-black border disabled:text-opacity-50 disabled:bg-opacity-50";
 </script>
 
-<div>
-    <button on:click={startVisualize} class="bg-white text-black p-2"
+<div class="flex flex-row gap-2">
+    <button on:click={startVisualize} disabled={false} class={buttonStyles}
         >Visualize</button
     >
-    <button on:click={clearGrid} class="bg-white text-black p-2"
+    <button on:click={clearGrid} disabled={$isVisualizing} class={buttonStyles}
         >Clear Grid</button
     >
 </div>
