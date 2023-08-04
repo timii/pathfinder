@@ -33,12 +33,14 @@
     // button text: #d6dbe5 rgb(214, 219, 229)
 
     const buttonStyles =
-        "bg-zinc-800 text-zinc-200 rounded-lg leading-none p-2.5 pb-3 shadow-[inset_0_2px_0_0_rgba(63,63,70,0.8)] border-black border disabled:text-opacity-50 disabled:bg-opacity-50";
+        "bg-zinc-800 text-zinc-200 rounded-lg leading-none p-2.5 pb-3 shadow-[inset_0_2px_0_0_rgba(63,63,70,0.8)] border-black border disabled:text-opacity-50 disabled:bg-opacity-50 hover:bg-[#313135] active:bg-zinc-800 duration-100 ease-in-out disabled:pointer-events-none";
 </script>
 
 <div class="flex flex-row gap-2">
-    <button on:click={startVisualize} disabled={false} class={buttonStyles}
-        >Visualize</button
+    <button
+        on:click={startVisualize}
+        disabled={$isVisualizing}
+        class={buttonStyles}>Visualize</button
     >
     <button on:click={clearGrid} disabled={$isVisualizing} class={buttonStyles}
         >Clear Grid</button
