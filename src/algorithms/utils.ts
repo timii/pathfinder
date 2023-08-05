@@ -122,6 +122,7 @@ export function drawShortestPath(grid: IField[][], path: number[]) {
                     isVisualizing.set(false)
                 }
             } else {
+                isVisualizing.set(false)
                 console.log("clear path interval")
                 clearInterval(pathInterval)
             }

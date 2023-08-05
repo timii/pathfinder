@@ -2,6 +2,7 @@
     import { algorithms } from "../algorithms/algorithms";
     import type { IField } from "../interfaces/Field";
     import { currentGrid, isVisualizing, selectedAlgo } from "../store/store";
+    import AlgoSelector from "./AlgoSelector.svelte";
     import Button from "./Button.svelte";
 
     function startVisualize() {
@@ -29,9 +30,18 @@
     }
 </script>
 
-<div class="flex flex-row gap-2">
-    <Button onClickCallback={startVisualize} text={"Visualize"} />
-    <Button onClickCallback={clearGrid} text={"Clear Grid"} />
+<div class="flex flex-row gap-2 w-full justify-center">
+    <AlgoSelector disabled={$isVisualizing} />
+    <Button
+        onClickCallback={startVisualize}
+        text={"Visualize"}
+        disabled={$isVisualizing}
+    />
+    <Button
+        onClickCallback={clearGrid}
+        text={"Clear Grid"}
+        disabled={$isVisualizing}
+    />
 </div>
 
 <style lang="postcss">

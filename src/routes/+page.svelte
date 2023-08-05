@@ -3,6 +3,7 @@
     import Controls from "../components/Controls.svelte";
     import Grid from "../components/Grid.svelte";
     import NodeSelector from "../components/NodeSelector.svelte";
+    import { selectedAlgo } from "../store/store";
 </script>
 
 <main
@@ -10,11 +11,18 @@
 >
     <Grid />
 
-    <AlgoSelector />
+    <p>Current node type: {$selectedAlgo}</p>
+
+    <!-- <AlgoSelector /> -->
     <!-- <NodeSelector /> -->
 
     <Controls />
 </main>
 
 <style lang="postcss">
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
 </style>
