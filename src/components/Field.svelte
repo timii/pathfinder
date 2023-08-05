@@ -20,7 +20,7 @@
         ["finish", "#FF0000"],
         ["searched", "#FFFF00"],
         ["path", "#db9409"],
-        ["default", "#FFFFFF"],
+        ["default", "transparent"],
     ]);
 
     let color = "";

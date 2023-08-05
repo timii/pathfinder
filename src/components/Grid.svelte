@@ -84,9 +84,9 @@
 <div>Number of fields: {numOfFields}</div>
 
 <h2>Fields:</h2>
-<div class="flex flex-col gap-1">
+<div class="flex flex-col">
     {#each $currentGrid as row, i}
-        <div class="flex flex-row gap-1">
+        <div class="flex flex-row">
             {#each row as col, j}
                 <Field fieldData={col} firstIndex={i} secondIndex={j} />
             {/each}
