@@ -1,7 +1,12 @@
 <script lang="ts">
     import { algorithms } from "../algorithms/algorithms";
     import type { IField } from "../interfaces/Field";
-    import { currentGrid, isVisualizing, selectedAlgo } from "../store/store";
+    import {
+        currentGrid,
+        isVisualizing,
+        selectedAlgo,
+        showStats,
+    } from "../store/store";
     import AlgoSelector from "./AlgoSelector.svelte";
     import Button from "./Button.svelte";
 
@@ -27,6 +32,7 @@
             });
             currentGrid.set(grid);
         }
+        showStats.set(false);
     }
 </script>
 

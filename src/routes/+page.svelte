@@ -3,6 +3,7 @@
     import Controls from "../components/Controls.svelte";
     import Grid from "../components/Grid.svelte";
     import NodeSelector from "../components/NodeSelector.svelte";
+    import Stats from "../components/Stats.svelte";
     import { selectedAlgo } from "../store/store";
 </script>
 
@@ -17,6 +18,8 @@
     <!-- <NodeSelector /> -->
 
     <Controls />
+
+    <Stats />
 </main>
 
 <style lang="postcss">

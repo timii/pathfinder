@@ -1,6 +1,6 @@
 import type { IField, IFieldProp } from "../interfaces/Field";
 import type { IPositionWithId } from "../interfaces/Position";
-import { currentGrid, isVisualizing } from "../store/store";
+import { currentGrid, fieldsSearched, isVisualizing, pathLength, showStats } from "../store/store";
 
 // function to return the indeces of a field using its prop name
 export function getFieldPositionByProp(grid: IField[][], property: IFieldProp): IPositionWithId | undefined {
@@ -103,10 +103,22 @@ export function getShortestPath(cameFromMap: Map<number, number>, startId: numbe
         }
     }
     path.push(startId)
+
+    // set pathLength for stats (-2 because we exclude start and finish field)
+    pathLength.set(path.length - 2)
+
     return path
 }
 
 export function drawShortestPath(grid: IField[][], path: number[]) {
+
+    // set fieldSearched for stats
+    let fieldsSearchedAmount = 0
+    grid.forEach(row => row.forEach(field => {
+        if (field.searched) { fieldsSearchedAmount++ }
+    }))
+    fieldsSearched.set(fieldsSearchedAmount)
+
     if (path.length > 0) {
         const pathInterval = setInterval(() => {
             if (path.length > 0) {
@@ -120,11 +132,13 @@ export function drawShortestPath(grid: IField[][], path: number[]) {
                 }
                 if (path.length === 0) {
                     isVisualizing.set(false)
+                    showStats.set(true)
                 }
             } else {
                 isVisualizing.set(false)
                 console.log("clear path interval")
                 clearInterval(pathInterval)
+                showStats.set(true)
             }
             currentGrid.set(grid)
         }, 500)
