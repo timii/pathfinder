@@ -81,17 +81,20 @@
     currentGrid.set(fields);
 </script>
 
-<div>Number of fields: {numOfFields}</div>
-
-<h2>Fields:</h2>
-<div class="flex flex-col">
-    {#each $currentGrid as row, i}
-        <div class="flex flex-row">
-            {#each row as col, j}
-                <Field fieldData={col} firstIndex={i} secondIndex={j} />
+<div
+    class="bg-zinc-800 p-[2px] rounded-lg bg-gradient-to-t from-transparent via-[#379237] to-transparent shadow-[0_0_5px_1px_rgba(63,63,70,0.8)] shadow-slate-600"
+>
+    <div class="bg-zinc-800 p-4">
+        <div class="flex flex-col gap-1">
+            {#each $currentGrid as row, i}
+                <div class="flex flex-row gap-1">
+                    {#each row as col, j}
+                        <Field fieldData={col} firstIndex={i} secondIndex={j} />
+                    {/each}
+                </div>
             {/each}
         </div>
-    {/each}
+    </div>
 </div>
 
 <style lang="postcss">

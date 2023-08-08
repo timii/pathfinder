@@ -15,11 +15,11 @@
     export let secondIndex: number;
 
     const nodeColorMap = new Map<string, string>([
-        ["wall", "#0000FF"],
-        ["start", "#00FF00"],
-        ["finish", "#FF0000"],
-        ["searched", "#FFFF00"],
-        ["path", "#db9409"],
+        ["wall", "#31C6D4"],
+        ["start", "#54B435"],
+        ["finish", "#FF1E1E"],
+        ["searched", "#FCE700"],
+        ["path", "#FF6D28"],
         ["default", "transparent"],
     ]);
 
@@ -31,6 +31,22 @@
         fieldData.searched ||
         fieldData.wall;
     let startOrFinishNode = fieldData.start || fieldData.finish;
+    let borderField = {
+        topBorder: firstIndex === 0,
+        rightBorder: secondIndex === 9,
+        bottomBorder: firstIndex === 9,
+        leftBorder: secondIndex === 0,
+    };
+
+    // set correct border widths for fields at the edges of the grid
+    const getBorderStyle = (val: boolean, styleName: string) =>
+        val ? styleName + ":2px" : styleName + ":1px";
+    const fieldBorderStyles = `
+    ${getBorderStyle(borderField.topBorder, "border-top-width")};
+    ${getBorderStyle(borderField.rightBorder, "border-right-width")};
+    ${getBorderStyle(borderField.bottomBorder, "border-bottom-width")};
+    ${getBorderStyle(borderField.leftBorder, "border-left-width")};`;
+    // console.log("field -> fieldBorderStyles:", fieldBorderStyles);
 
     // console.log(
     //     "fieldData -> start:",
@@ -234,7 +250,7 @@
     on:mousedown={handleClick}
     on:contextmenu={handleContextmenu}
     on:mouseenter={handleMouseEnter}
-    class="field hover:cursor-pointer w-8 h-8 border-solid border-gray-400 border"
+    class="field hover:cursor-pointer w-8 h-8 border-solid border-zinc-200 border"
     style="background-color: {color}; cursor: {startOrFinishNode
         ? 'default'
         : 'pointer'};"
