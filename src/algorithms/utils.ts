@@ -141,6 +141,6 @@ export function drawShortestPath(grid: IField[][], path: number[]) {
                 showStats.set(true)
             }
             currentGrid.set(grid)
-        }, 500)
+        }, 250)
     }
 }

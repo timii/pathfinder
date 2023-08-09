@@ -1,22 +1,23 @@
 import type { IField } from "../interfaces/Field";
-import type { IPositionWithId } from "../interfaces/Position";
-import { currentGrid } from "../store/store";
-import { drawShortestPath, getAllAdjacentFieldPositions, getFieldPositionById, getFieldPositionByProp, getShortestPath, isEveryFieldSearched, isFieldEmtpyAndExist } from "./utils";
+import type { IPositionWithId, IPositionWithIdAndPrio } from "../interfaces/Position";
+import { currentGrid, isVisualizing } from "../store/store";
+import { drawShortestPath, getAllAdjacentFieldPositions, getFieldPositionByProp, getShortestPath, isEveryFieldSearched, isFieldEmtpyAndExist } from "./utils";
 
-// function for the breadth first search algorithm
-export function bfs(grid: IField[][]) {
-    console.log("bfs function called -> grid:", grid);
-    // const rowMax = grid[0].length
-    // const colMax = grid.length
+export function dijkstra(grid: IField[][]) {
+    console.log("dijkstra called -> grid:", grid)
+
     const startNode = getFieldPositionByProp(grid, "start")
     const finishNode = getFieldPositionByProp(grid, "finish")
     // map to keep track of where we came from (key: next field, value: current field)
     let cameFromMap = new Map<number, number>()
 
     if (startNode && finishNode) {
-        let fieldsToCheck: IPositionWithId[] = [startNode]
-        let fieldsToCheckWithoutStartAndFinish: IPositionWithId[] = []
-        let neighbours: IPositionWithId[] = []
+        // map to keep track of the cost of movements so far (key: next field, value: prio)
+        let costSoFarMap = new Map<number, number>([[startNode.id, 0]])
+        let fieldsToCheck: IPositionWithIdAndPrio[] = [{ ...startNode, prio: 0 }]
+        let fieldsToCheckWithoutStartAndFinish: IPositionWithIdAndPrio[] = []
+        let neighbours: IPositionWithIdAndPrio[] = []
+        // let i = 0
 
         const searchInterval = setInterval(() => {
             console.log("in while -> fieldsToCheck:", fieldsToCheck, "neighbours:", neighbours, "cameFromMap:", cameFromMap)
@@ -24,7 +25,11 @@ export function bfs(grid: IField[][]) {
 
                 // get all the adjacent fields of each field that we have to check
                 fieldsToCheck.forEach(field => {
-                    neighbours.push(...getAllAdjacentFieldPositions(grid, field.firstIndex, field.secondIndex))
+
+                    // map each neighbour to also include the prio
+                    const newNeighbours = [...getAllAdjacentFieldPositions(grid, field.firstIndex, field.secondIndex)].map(el => { return { ...el, prio: 0 } as IPositionWithIdAndPrio })
+
+                    neighbours.push(...newNeighbours)
                     neighbours.forEach(el => {
                         if (!cameFromMap.has(el.id)) {
                             cameFromMap.set(el.id, field.id)
@@ -47,8 +52,9 @@ export function bfs(grid: IField[][]) {
 
                     neighbours.forEach(field => {
                         const element = grid[field.firstIndex][field.secondIndex]
-                        if (!element.start && !element.finish)
+                        if (!element.start && !element.finish) {
                             element.searched = true
+                        }
                     })
                 }
                 currentGrid.set(grid)
@@ -66,8 +72,10 @@ export function bfs(grid: IField[][]) {
                     drawShortestPath(grid, path)
                 }
             }
-        }, 500)
+        }, 250)
     }
 
-    console.log("bfs function called -> grid after:", grid, "isEveryFieldSearched:", isEveryFieldSearched(grid));
+
+    isVisualizing.set(false)
 }
+
