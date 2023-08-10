@@ -45,11 +45,13 @@ export function bfs(grid: IField[][]) {
                     // create a second array with all neighbours in it, but filter every field out that isn't empty
                     fieldsToCheckWithoutStartAndFinish = neighbours.filter((el => isFieldEmtpyAndExist(grid, el.firstIndex, el.secondIndex, true)))
 
+                    // mark each neighbour as searched 
                     neighbours.forEach(field => {
                         const element = grid[field.firstIndex][field.secondIndex]
                         if (!element.start && !element.finish)
                             element.searched = true
                     })
+                    neighbours = []
                 }
                 currentGrid.set(grid)
 

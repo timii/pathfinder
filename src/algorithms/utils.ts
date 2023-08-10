@@ -1,5 +1,5 @@
 import type { IField, IFieldProp } from "../interfaces/Field";
-import type { IPositionWithId } from "../interfaces/Position";
+import type { IPosition, IPositionWithId } from "../interfaces/Position";
 import { currentGrid, fieldsSearched, isVisualizing, pathLength, showStats } from "../store/store";
 
 // function to return the indeces of a field using its prop name
@@ -88,6 +88,16 @@ export function isFieldEmtpyAndExist(grid: IField[][], firstIndex: number, secon
 // function to check if every field is either searched or either a start, finish or wall field
 export function isEveryFieldSearched(grid: IField[][]) {
     return grid.every((row, i) => row.every((_, j) => !isFieldEmtpyAndExist(grid, i, j)))
+}
+
+// function to get the next field given a grid, two indeces and potentially a preferred direction where the next field should be
+export function getNextField(grid: IField[][], firstIndex: number, secondIndex: number, rowMax: number, colMax: number, lastDirection: IPosition, prefDirection?: IPosition) {
+    console.log("getNextField -> grid:", grid, firstIndex, secondIndex, "rowMax/colMax:", rowMax, colMax, "prefDirection:", prefDirection, "lastDirection:", lastDirection)
+
+    // try to return next field in the same direction as the last move
+
+
+    return { firstIndex: firstIndex - 1, secondIndex: secondIndex, id: grid[firstIndex][secondIndex].id }
 }
 
 // function to get the shortest path using a given map of ids

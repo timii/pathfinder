@@ -56,6 +56,7 @@ export function dijkstra(grid: IField[][]) {
                             element.searched = true
                         }
                     })
+                    neighbours = []
                 }
                 currentGrid.set(grid)
 
