@@ -87,4 +87,5 @@ export function dfs(grid: IField[][]) {
         }, 50)
     }
 
+    isVisualizing.set(false)
 }

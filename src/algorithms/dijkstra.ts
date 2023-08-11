@@ -77,7 +77,6 @@ export function dijkstra(grid: IField[][]) {
         }, 250)
     }
 
-
     isVisualizing.set(false)
 }
 

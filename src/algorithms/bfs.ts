@@ -1,6 +1,6 @@
 import type { IField } from "../interfaces/Field";
 import type { IPositionWithId } from "../interfaces/Position";
-import { currentGrid } from "../store/store";
+import { currentGrid, isVisualizing } from "../store/store";
 import { drawShortestPath, getAllAdjacentFieldPositions, getFieldPositionById, getFieldPositionByProp, getShortestPath, isEveryFieldSearched, isFieldEmtpyAndExist } from "./utils";
 
 // function for the breadth first search algorithm
@@ -68,5 +68,5 @@ export function bfs(grid: IField[][]) {
         }, 50)
     }
 
-    console.log("bfs function called -> grid after:", grid, "isEveryFieldSearched:", isEveryFieldSearched(grid));
+    isVisualizing.set(false)
 }
