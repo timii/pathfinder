@@ -5,7 +5,8 @@ import { drawShortestPath, getAllAdjacentFieldPositions, getFieldPositionByProp,
 
 export function dijkstra(grid: IField[][]) {
     console.log("dijkstra called -> grid:", grid)
-
+    const rowMax = grid[0].length
+    const colMax = grid.length
     const startNode = getFieldPositionByProp(grid, "start")
     const finishNode = getFieldPositionByProp(grid, "finish")
     // map to keep track of where we came from (key: next field, value: current field)
@@ -67,7 +68,7 @@ export function dijkstra(grid: IField[][]) {
                     clearInterval(searchInterval)
 
                     // get path from start to finish
-                    const path = getShortestPath(cameFromMap, startNode.id, finishNode.id)
+                    const path = getShortestPath(cameFromMap, startNode.id, finishNode.id, colMax * rowMax)
 
                     // draw path to grid
                     drawShortestPath(grid, path)

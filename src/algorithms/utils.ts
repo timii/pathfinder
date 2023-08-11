@@ -70,13 +70,15 @@ export function getAllAdjacentFieldPositions(grid: IField[][], firstIndex: numbe
 }
 
 // function to check if a field at given indeces exists and if it's empty 
-export function isFieldEmtpyAndExist(grid: IField[][], firstIndex: number, secondIndex: number, includeStartAndFinish?: boolean) {
+export function isFieldEmtpyAndExist(grid: IField[][], firstIndex: number, secondIndex: number, includeStartAndFinish?: boolean, includeOnlyStart?: boolean) {
     const field = grid[firstIndex][secondIndex]
     // console.log("isFieldEmtpyAndExist -> el:", field, firstIndex, secondIndex)
     if (field) {
         // console.log("field.searched || field.start || field.finish || field.path:", field.searched || field.start || field.finish || field.path)
         if (includeStartAndFinish) {
             return !(field.searched || field.path || field.wall || field.start || field.finish)
+        } else if (includeOnlyStart) {
+            return !(field.searched || field.path || field.wall || field.start)
         } else {
             return !(field.searched || field.path || field.wall)
         }
@@ -95,24 +97,22 @@ export function isWholeColumnEmpty(grid: IField[][], colIndex: number) {
 }
 
 // function to get the next field given a grid and two indeces
-export function getNextField(grid: IField[][], firstIndex: number, secondIndex: number, rowMax: number, colMax: number, lastDirection: IPosition, beforeLastDirection: IPosition) {
-    // console.log("getNextField -> grid:", grid, firstIndex, secondIndex, "rowMax/colMax:", rowMax, colMax, "prefDirection:", prefDirection, "lastDirection:", lastDirection)
+export function getNextField(grid: IField[][], firstIndex: number, secondIndex: number, rowMax: number, colMax: number, lastDirection: IPosition) {
 
-    //     Steps:
-    // 1. Try to get to first row -> y index schould be 0 && top right element is empty
+    // try to get to first row -> y index schould be 0 && top right element is empty
     if (firstIndex > 0 && grid && isFieldEmtpyAndExist(grid, 0, rowMax - 1) && isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: -1, secondIndex: 0 }, colMax, rowMax)) {
         // go up 
         console.log("moving up from the start is possible")
         return { firstIndex: firstIndex - 1, secondIndex, id: grid[firstIndex - 1][secondIndex].id }
     }
 
-    // 2. Try to get to the right -> x index should be rowMax and top right field empty
+    // try to get to the right -> x index should be rowMax and top right field empty
     if (firstIndex === 0 && secondIndex < rowMax - 1 && isFieldEmtpyAndExist(grid, 0, rowMax - 1) && isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: 0, secondIndex: 1 }, colMax, rowMax)) {
         console.log("moving right is possible")
         return { firstIndex, secondIndex: secondIndex + 1, id: grid[firstIndex][secondIndex + 1].id }
     }
 
-    // if moving up and down is possible -> check beforeLastDirection to either move up or down
+    // if moving up and down is possible -> check direction to either move up or down
     if (isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: 1, secondIndex: 0 }, colMax, rowMax) && isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: -1, secondIndex: 0 }, colMax, rowMax) && lastDirection) {
         console.log("moving up and down is possible, check lastDirection:", lastDirection)
         const newFirstIndex = firstIndex + lastDirection.firstIndex
@@ -143,121 +143,21 @@ export function getNextField(grid: IField[][], firstIndex: number, secondIndex: 
         console.log("moving to the left is possible")
         return { firstIndex, secondIndex: secondIndex - 1, id: grid[firstIndex][secondIndex - 1].id }
     }
-    // 3. If y index === 0 && x index === row Max 
-    //     -> go down
-    // 4. If x index === colMax 
-    //     -> check if whole column is searched 
-    //         -> if yes go left an then up
-    //         -> if no go down immediately
-    // 5. If x index === 0
-    //     -> check if whole column is searched
-    //         -> if yes go left and then down
-    //         -> if no go down immediately
-
-
-    // move up until we get to index zero for the y axis, 
-    // if (firstIndex - 1 >= 0 && isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: -1, secondIndex: 0 }, colMax, rowMax)) {
-    //     console.log("moving up is possible")
-    //     return { firstIndex: firstIndex - 1, secondIndex, id: grid[firstIndex - 1][secondIndex].id }
-    // }
-    // // then go to the right until we reach the max index of a row 
-    // if (secondIndex + 1 <= rowMax && isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: 0, secondIndex: 1 }, colMax, rowMax)) {
-    //     console.log("moving right is possible")
-    //     return { firstIndex, secondIndex: secondIndex + 1, id: grid[firstIndex][secondIndex + 1].id }
-    // }
-    // // and then always try to search the most right field in the row by either moving down or up
-
-    // // if we are in the top row move down
-    // if (firstIndex < colMax && lastDirection && lastDirection.firstIndex === 1) {
-    //     if (firstIndex + 1 <= colMax && isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: 1, secondIndex: 0 }, colMax, rowMax)) {
-    //         console.log("moving downwards is possible")
-    //         return { firstIndex: firstIndex + 1, secondIndex, id: grid[firstIndex + 1][secondIndex].id }
-    //     }
-    // }
-
-    // // if we are at the bottom row move up
-    // if (firstIndex > 0 && lastDirection && lastDirection.firstIndex === -1) {
-    //     if (firstIndex - 1 >= 0 && isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: -1, secondIndex: 0 }, colMax, rowMax)) {
-    //         console.log("moving upwards is possible")
-    //         return { firstIndex: firstIndex - 1, secondIndex, id: grid[firstIndex - 1][secondIndex].id }
-    //     }
-    // }
-
-    // // if we are in the bottom or top row, move to the left
-    // if ((firstIndex === colMax - 1 || firstIndex === 0) && isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: 0, secondIndex: -1 }, colMax, rowMax)) {
-    //     console.log("moving to the left is possible")
-    //     return { firstIndex, secondIndex: secondIndex - 1, id: grid[firstIndex][secondIndex - 1].id }
-    // }
-
-
-    // try to return next field in the same direction as the last move
-    // if (lastDirection && isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, lastDirection, colMax, rowMax)) {
-    //     console.log("move into same direction before is possible")
-    //     const nextFirstIndex = firstIndex + lastDirection.firstIndex
-    //     const nextSecondIndex = secondIndex + lastDirection.secondIndex
-    //     return { firstIndex: nextFirstIndex, secondIndex: nextSecondIndex, id: grid[nextFirstIndex][nextSecondIndex].id }
-    // }
-
-    // if the search has already turned at least 3 times we first need to turn another way before turning right again
-    // if (rightTurnAmount < 3) {
-    //     // try to return next field in the same direction as the last move
-    //     if (lastDirection && isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, lastDirection, colMax, rowMax)) {
-    //         console.log("move into same direction before is possible")
-    //         const nextFirstIndex = firstIndex + lastDirection.firstIndex
-    //         const nextSecondIndex = secondIndex + lastDirection.secondIndex
-    //         return [{ firstIndex: nextFirstIndex, secondIndex: nextSecondIndex, id: grid[nextFirstIndex][nextSecondIndex].id }, false]
-    //     }
-
-    //     // if move into same direction as before is not possible try move to the right
-    //     if (isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: 0, secondIndex: 1 }, colMax, rowMax)) {
-    //         console.log("moving to the right is possible")
-    //         return { firstIndex, secondIndex: secondIndex + 1, id: grid[firstIndex][secondIndex + 1].id }
-    //     }
-
-    //     // if moving to the right is not possible, try to move downwards
-    //     if (isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: 1, secondIndex: 0 }, colMax, rowMax)) {
-    //         console.log("moving downwards is possible")
-    //         return { firstIndex: firstIndex + 1, secondIndex, id: grid[firstIndex + 1][secondIndex].id }
-    //     }
-
-    //     // if moving down is not possible, try to move to the left
-    //     if (isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: 0, secondIndex: -1 }, colMax, rowMax)) {
-    //         console.log("moving to the left is possible")
-    //         return { firstIndex, secondIndex: secondIndex - 1, id: grid[firstIndex][secondIndex - 1].id }
-    //     }
-
-    //     // if moving left is not possible, try to move upwards
-    //     if (isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: -1, secondIndex: 0 }, colMax, rowMax)) {
-    //         console.log("moving upwards is possible")
-    //         return { firstIndex: firstIndex - 1, secondIndex, id: grid[firstIndex - 1][secondIndex].id }
-    //     }
-    // } else {
-    //     // turn left/towards an empty field 
-    //     if (lastDirection && isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, lastDirection, colMax, rowMax)) {
-    //         console.log("move into same direction before is possible")
-    //         const nextFirstIndex = firstIndex + lastDirection.firstIndex
-    //         const nextSecondIndex = secondIndex + lastDirection.secondIndex
-    //         return { firstIndex: nextFirstIndex, secondIndex: nextSecondIndex, id: grid[nextFirstIndex][nextSecondIndex].id }
-    //     }
-    // }
-
-
-    console.log("no move is possible")
 }
 
 // check if a move towards a given direction is possible
 export function isMoveInDirectionPossible(grid: IField[][], curPosition: IPosition, direction: IPosition, colMax: number, rowMax: number) {
     const newFirstIndex = curPosition.firstIndex + direction.firstIndex
     const newSecondIndex = curPosition.secondIndex + direction.secondIndex
-    return newFirstIndex < colMax && newFirstIndex >= 0 && newSecondIndex < rowMax && newSecondIndex >= 0 && isFieldEmtpyAndExist(grid, newFirstIndex, newSecondIndex)
+    return newFirstIndex < colMax && newFirstIndex >= 0 && newSecondIndex < rowMax && newSecondIndex >= 0 && isFieldEmtpyAndExist(grid, newFirstIndex, newSecondIndex, false, true)
 }
 
 // function to get the shortest path using a given map of ids
-export function getShortestPath(cameFromMap: Map<number, number>, startId: number, finishId: number) {
+export function getShortestPath(cameFromMap: Map<number, number>, startId: number, finishId: number, amountOfFields: number) {
     let current = finishId
-    console.log("before while -> current:", current, "cameFromMap:", cameFromMap)
+    console.log("before while -> current:", current, "cameFromMap:", cameFromMap, "amountOfFields:", amountOfFields)
     let path: number[] = []
-    while (current !== startId && path.length < 50) {
+    while (current !== startId && path.length < amountOfFields) {
         path.push(current)
         console.log("in while -> path:", path, "cameFromMap.get(current):", cameFromMap.get(current))
         if (cameFromMap.has(current)) {
@@ -303,7 +203,7 @@ export function drawShortestPath(grid: IField[][], path: number[]) {
                 showStats.set(true)
             }
             currentGrid.set(grid)
-        }, 250)
+        }, 50)
     }
 }
 

@@ -6,8 +6,8 @@ import { drawShortestPath, getAllAdjacentFieldPositions, getFieldPositionById, g
 // function for the breadth first search algorithm
 export function bfs(grid: IField[][]) {
     console.log("bfs function called -> grid:", grid);
-    // const rowMax = grid[0].length
-    // const colMax = grid.length
+    const rowMax = grid[0].length
+    const colMax = grid.length
     const startNode = getFieldPositionByProp(grid, "start")
     const finishNode = getFieldPositionByProp(grid, "finish")
     // map to keep track of where we came from (key: next field, value: current field)
@@ -30,7 +30,6 @@ export function bfs(grid: IField[][]) {
                             cameFromMap.set(el.id, field.id)
                         }
                     })
-                    // console.log("in for each -> field:", field, "neighbours:", neighbours)
                 })
 
                 // const neighbours = getAllAdjacentFieldPositions(grid, startNode.firstIndex, startNode.secondIndex)
@@ -55,20 +54,18 @@ export function bfs(grid: IField[][]) {
                 }
                 currentGrid.set(grid)
 
-                // console.log("end of interval -> isEveryFieldSearched(grid):", isEveryFieldSearched(grid), " cameFromMap.has(finishNode.id):", cameFromMap.has(finishNode.id), "fieldsToCheckWithoutStartAndFinish.length === 0:", fieldsToCheckWithoutStartAndFinish.length === 0, fieldsToCheckWithoutStartAndFinish)
-
                 // stop checking for fields if every field is not empty or a path to the finish field has been found
                 if (isEveryFieldSearched(grid) || cameFromMap.has(finishNode.id) || fieldsToCheckWithoutStartAndFinish.length === 0) {
                     clearInterval(searchInterval)
 
                     // get path from start to finish
-                    const path = getShortestPath(cameFromMap, startNode.id, finishNode.id)
+                    const path = getShortestPath(cameFromMap, startNode.id, finishNode.id, colMax * rowMax)
 
                     // draw path to grid
                     drawShortestPath(grid, path)
                 }
             }
-        }, 500)
+        }, 50)
     }
 
     console.log("bfs function called -> grid after:", grid, "isEveryFieldSearched:", isEveryFieldSearched(grid));
