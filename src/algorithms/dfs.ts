@@ -1,7 +1,7 @@
 import type { IField } from "../interfaces/Field";
 import type { IPosition, IPositionWithId } from "../interfaces/Position";
 import { currentGrid } from "../store/store";
-import { drawShortestPath, getFieldPositionByProp, getNextField, getShortestPath, isEveryFieldSearched, isFieldEmtpyAndExist } from "./utils";
+import { calculateLastDirection, drawShortestPath, getFieldPositionByProp, getNextField, getShortestPath, isEveryFieldSearched, isFieldEmtpyAndExist } from "./utils";
 
 export function dfs(grid: IField[][]) {
     const rowMax = grid[0].length
@@ -13,54 +13,47 @@ export function dfs(grid: IField[][]) {
     let cameFromMap = new Map<number, number>()
     // set a default direction of going up at the start
     let lastDircetion: IPosition = { firstIndex: -1, secondIndex: 0 }
+    let beforeLastDircetion: IPosition
 
     if (startNode && finishNode) {
         let fieldsToCheck: IPositionWithId[] = [startNode]
         let fieldsToCheckWithoutStartAndFinish: IPositionWithId[] = []
         let neighbours: IPositionWithId[] = [startNode]
-        let lastTwoFields: IPositionWithId[] = [startNode]
-        let rightTurnAmount = 0
-        let lastRowIndex = 0
+        let lastThreeFields: IPositionWithId[] = [startNode]
 
-        let i = 0;
         const searchInterval = setInterval(() => {
-            i++;
 
             if (fieldsToCheck.length > 0) {
                 fieldsToCheck.forEach(field => {
-                    console.log("dfs -> field:", field, field.firstIndex, field.secondIndex, "i:", i)
-                    const nextField = getNextField(grid, field.firstIndex, field.secondIndex, rowMax, colMax, lastDircetion, rightTurnAmount, lastRowIndex)
+                    console.log("dfs -> field:", field, field.firstIndex, field.secondIndex)
+                    const nextField = getNextField(grid, field.firstIndex, field.secondIndex, rowMax, colMax, lastDircetion, beforeLastDircetion)
                     if (nextField) {
-                        // if (turnedRight) {
-                        //     rightTurnAmount++
-                        // }
+                        console.log("next field is defined:", nextField)
 
                         neighbours = [nextField]
 
-                        // keep track of the last two fields visited
-                        if (lastTwoFields.length !== 2) {
-                            lastTwoFields.push(nextField)
+                        // keep track of the last fields visited
+                        if (lastThreeFields.length !== 3) {
+                            lastThreeFields.push(nextField)
                         } else {
-                            lastTwoFields.shift()
-                            lastTwoFields.push(nextField)
+                            lastThreeFields.shift()
+                            lastThreeFields.push(nextField)
                         }
 
-                        // calculate the direction we moved last by using the last two fields
-                        const lastYDirection = lastTwoFields[1].firstIndex - lastTwoFields[0].firstIndex
-                        const lastXDirection = lastTwoFields[1].secondIndex - lastTwoFields[0].secondIndex
-                        lastDircetion = { firstIndex: lastYDirection, secondIndex: lastXDirection }
 
-                        // neighbours.push(...[{ firstIndex: field.firstIndex - 1, secondIndex: field.secondIndex, id: grid[field.firstIndex][field.secondIndex].id }])
-                        console.log("dfs -> neighbours after:", neighbours, "lastDircetion:", lastDircetion, "lastTwoFields:", lastTwoFields[0], lastTwoFields[1], "nextField:", nextField)
+                        lastDircetion = calculateLastDirection(lastThreeFields[1], lastThreeFields[0])
 
+                        if (lastThreeFields.length > 2) {
+                            beforeLastDircetion = calculateLastDirection(lastThreeFields[2], lastThreeFields[1])
+                        }
+
+                        // fill cameFromMap to later draw the path from finish to start
                         fieldsToCheck.forEach(field => {
-                            // neighbours.push(...getAllAdjacentFieldPositions(grid, field.firstIndex, field.secondIndex))
                             neighbours.forEach(el => {
                                 if (!cameFromMap.has(el.id)) {
                                     cameFromMap.set(el.id, field.id)
                                 }
                             })
-                            // console.log("in for each -> field:", field, "neighbours:", neighbours)
                         })
                     } else {
                         clearInterval(searchInterval)
@@ -89,7 +82,7 @@ export function dfs(grid: IField[][]) {
 
 
             // stop checking for fields if every field is not empty or a path to the finish field has been found
-            if (i === 50 || isEveryFieldSearched(grid) || cameFromMap.has(finishNode.id) || fieldsToCheckWithoutStartAndFinish.length === 0) {
+            if (isEveryFieldSearched(grid) || cameFromMap.has(finishNode.id) || fieldsToCheckWithoutStartAndFinish.length === 0) {
                 clearInterval(searchInterval)
 
                 // get path from start to finish

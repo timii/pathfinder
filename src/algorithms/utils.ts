@@ -95,7 +95,7 @@ export function isWholeColumnEmpty(grid: IField[][], colIndex: number) {
 }
 
 // function to get the next field given a grid and two indeces
-export function getNextField(grid: IField[][], firstIndex: number, secondIndex: number, rowMax: number, colMax: number, lastDirection: IPosition, rightTurnAmount: number, lastRowIndex: number) {
+export function getNextField(grid: IField[][], firstIndex: number, secondIndex: number, rowMax: number, colMax: number, lastDirection: IPosition, beforeLastDirection: IPosition) {
     // console.log("getNextField -> grid:", grid, firstIndex, secondIndex, "rowMax/colMax:", rowMax, colMax, "prefDirection:", prefDirection, "lastDirection:", lastDirection)
 
     //     Steps:
@@ -112,18 +112,33 @@ export function getNextField(grid: IField[][], firstIndex: number, secondIndex: 
         return { firstIndex, secondIndex: secondIndex + 1, id: grid[firstIndex][secondIndex + 1].id }
     }
 
-    // if we are in the top row and the whole column is not yet searched -> go down
+    // if moving up and down is possible -> check beforeLastDirection to either move up or down
+    if (isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: 1, secondIndex: 0 }, colMax, rowMax) && isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: -1, secondIndex: 0 }, colMax, rowMax) && lastDirection) {
+        console.log("moving up and down is possible, check lastDirection:", lastDirection)
+        const newFirstIndex = firstIndex + lastDirection.firstIndex
+        const newSecondIndex = secondIndex + lastDirection.secondIndex
+        return { firstIndex: newFirstIndex, secondIndex: newSecondIndex, id: grid[newFirstIndex][newSecondIndex].id }
+    }
+
+    // move right if possible
+    if (isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: 0, secondIndex: 1 }, colMax, rowMax)) {
+        console.log("moving right is possible")
+        return { firstIndex, secondIndex: secondIndex + 1, id: grid[firstIndex][secondIndex + 1].id }
+    }
+
+    // move down if possible
     if (isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: 1, secondIndex: 0 }, colMax, rowMax)) {
         console.log("moving down is possible")
         return { firstIndex: firstIndex + 1, secondIndex, id: grid[firstIndex + 1][secondIndex].id }
     }
-    // if we are in the bottom row and the whole column is not yet searched -> go up
+
+    // move up if possible
     if (isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: -1, secondIndex: 0 }, colMax, rowMax)) {
         console.log("moving up is possible")
         return { firstIndex: firstIndex - 1, secondIndex, id: grid[firstIndex - 1][secondIndex].id }
     }
 
-    // if whole column is searched -> go left
+    // move left if possible
     if (isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: 0, secondIndex: -1 }, colMax, rowMax)) {
         console.log("moving to the left is possible")
         return { firstIndex, secondIndex: secondIndex - 1, id: grid[firstIndex][secondIndex - 1].id }
@@ -228,13 +243,13 @@ export function getNextField(grid: IField[][], firstIndex: number, secondIndex: 
 
 
     console.log("no move is possible")
-
-    // return { firstIndex: firstIndex - 1, secondIndex: secondIndex, id: grid[firstIndex - 1][secondIndex].id }
 }
 
 // check if a move towards a given direction is possible
-function isMoveInDirectionPossible(grid: IField[][], curPosition: IPosition, direction: IPosition, colMax: number, rowMax: number) {
-    return curPosition.firstIndex + direction.firstIndex < colMax && curPosition.firstIndex + direction.firstIndex >= 0 && curPosition.secondIndex + direction.secondIndex < rowMax && curPosition.secondIndex + direction.secondIndex >= 0 && !grid[curPosition.firstIndex + direction.firstIndex][curPosition.secondIndex + direction.secondIndex].searched
+export function isMoveInDirectionPossible(grid: IField[][], curPosition: IPosition, direction: IPosition, colMax: number, rowMax: number) {
+    const newFirstIndex = curPosition.firstIndex + direction.firstIndex
+    const newSecondIndex = curPosition.secondIndex + direction.secondIndex
+    return newFirstIndex < colMax && newFirstIndex >= 0 && newSecondIndex < rowMax && newSecondIndex >= 0 && isFieldEmtpyAndExist(grid, newFirstIndex, newSecondIndex)
 }
 
 // function to get the shortest path using a given map of ids
@@ -290,4 +305,11 @@ export function drawShortestPath(grid: IField[][], path: number[]) {
             currentGrid.set(grid)
         }, 250)
     }
+}
+
+// function to calculate the last direction moved by using two given fields
+export function calculateLastDirection(lastField: IPosition, currentField: IPosition) {
+    const beforeLastYDirection = lastField.firstIndex - currentField.firstIndex
+    const beforeLastXDirection = lastField.secondIndex - currentField.secondIndex
+    return { firstIndex: beforeLastYDirection, secondIndex: beforeLastXDirection }
 }
