@@ -42,41 +42,13 @@
         }
     }
 
-    console.log(
-        "fields before:",
-        fields,
-        // "row:",
-        // row,
-        "total number of fields:",
-        cols * rows,
-        "fields[1][1]:",
-        fields[1][5],
-        "fields[8][8]:",
-        fields[8][8],
-        "currentGrid",
-        $currentGrid
-    );
-
     // set a fixed start and finsish field
-    fields[1][5] = { ...fields[1][5], start: true };
-    fields[8][8] = { ...fields[8][8], finish: true };
+    // fields[2][2] = { ...fields[2][2], start: true };
+    fields[5][2] = { ...fields[5][2], start: true };
+    // fields[8][8] = { ...fields[8][8], finish: true };
+    fields[5][7] = { ...fields[5][7], finish: true };
     // fields[1][1] = { ...fields[1][1], searched: true };
     // fields[7][0] = { ...fields[7][0], path: true };
-
-    console.log(
-        "fields after:",
-        fields,
-        // "row:",
-        // row,
-        "total number of fields:",
-        cols * rows,
-        "fields[1][5]:",
-        fields[1][5],
-        "fields[8][8]:",
-        fields[8][8],
-        "currentGrid",
-        $currentGrid
-    );
 
     currentGrid.set(fields);
 </script>
