@@ -1,33 +1,26 @@
 <script lang="ts">
     import { algorithms } from "../algorithms/algorithms";
     import type { IAlgorithm } from "../interfaces/Algorithm";
+    import type { ISelectItem } from "../interfaces/Select";
     import { isVisualizing, selectedAlgo } from "../store/store";
 
     // external select component
     import Select from "svelte-select";
 
     export let disabled = false;
+    export let items: ISelectItem[] = [];
+    export let startValue = {};
+    export let onChangeCallback = (e: CustomEvent) =>
+        console.log("onChangeCallback not defined");
+    export let width = "230px";
 
-    // map algorithms to be able to use in select
-    const mappedAlgos = algorithms.map((el) => {
-        return { label: el.name, value: el.name };
-    });
-
-    // initially select first algorithm
-    // TODO: add check later if algorithm is already set in localStorage
-    let value: { label: string; value: string } = mappedAlgos[0];
-    selectedAlgo.set(value.label);
-
-    function onChange(event: Event) {
-        console.log("onChange called -> event:", event, "selected:", value);
-        selectedAlgo.set(value.label);
-    }
+    let value = startValue;
 </script>
 
 <div style={$isVisualizing ? "pointer-events: none;" : ""}>
     <Select
-        items={mappedAlgos}
-        on:change={onChange}
+        {items}
+        on:change={onChangeCallback}
         {disabled}
         bind:value
         showChevron={true}
@@ -35,7 +28,7 @@
         searchable={false}
         --background="#27272a"
         --list-background="#27272a"
-        --width="230px"
+        --width={width}
         --border="1px solid black"
         --border-hover="1px solid black"
         --border-focused="1px solid black"
