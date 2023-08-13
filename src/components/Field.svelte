@@ -7,10 +7,10 @@
         id: 0,
         start: false,
         finish: false,
+        path: false,
         wall: false,
         grass: false,
         searched: false,
-        path: false,
     };
     export let firstIndex: number;
     export let secondIndex: number;
@@ -81,36 +81,51 @@
         }
 
         // set color according to prop in fieldData that is set to true
-        const fieldProp = Object.keys(fieldData).find(
+        const fieldProps = Object.keys(fieldData).filter(
             (key) => fieldData[key as IFieldProp] === true
         );
-        if (fieldProp) {
-            color = nodeColorMap.get(fieldProp as IFieldProp)!;
+
+        if (fieldProps) {
+            if (fieldProps.length === 1) {
+                color = nodeColorMap.get(fieldProps[0] as IFieldProp)!;
+            }
+
+            // if mutiple props are true -> prioritize path to show the path after searching
+            if (fieldProps.length > 1 && fieldProps.includes("path")) {
+                color = nodeColorMap.get("path")!;
+            }
         }
     }
 
     // function to write the grid with the changed field into the store
-    function setGrid(key: IFieldProp, value: boolean) {
+    function setGrid(newFieldData: IField) {
         const grid: IField[][] = $currentGrid;
         const gridField = grid[firstIndex][secondIndex];
 
         grid[firstIndex][secondIndex] = {
             ...gridField,
-            [key]: value,
+            ...newFieldData,
         };
 
         currentGrid.set(grid);
     }
 
+    // change a given fieldData prop to a given value
     function changeFieldData(fieldProp: IFieldProp, value: boolean) {
         fieldData[fieldProp] = value;
-        setGrid(fieldProp, value);
+
+        // change the weight of the field for given node types
+        if (fieldProp === "grass") {
+            fieldData.weight = 5;
+        }
+
+        setGrid(fieldData);
     }
 
     // reset field color to default color
     function resetFieldColor() {
         Object.keys(fieldData).forEach((key) => {
-            if (key !== "id") {
+            if (key !== "id" && key !== "weight") {
                 fieldData[key as IFieldProp] = false;
             }
         });
@@ -129,18 +144,15 @@
         if (!fieldData.start && !fieldData.finish) {
             // if left mouse button clicked
             if (event.buttons === 1) {
-                console.log("left mouse clicked");
+                // console.log("left mouse clicked");
                 // if field is already colored -> reset to default color
                 if (isFieldColored()) {
-                    console.log("field is already colored");
                     resetFieldColor();
                 }
                 // if field has no color -> color it according to node type
                 else {
-                    console.log("field is not yet colored");
                     const nodeType: string = $selectedNodeType;
                     const fieldProp = nodeType.toLowerCase() as IFieldProp;
-                    console.log("selected node type:", fieldProp);
                     changeFieldData(fieldProp, true);
                 }
             }
@@ -194,10 +206,9 @@
         // setStoreValue();
     }
 
-    // function to handle dragging mouse over multiple fields while holding left or right button
+    // function to handle dragging mouse over multiple fields
     function handleMouseEnter(event: MouseEvent) {
         if (!fieldData.start && !fieldData.finish) {
-            // console.log("handleMouseEnter -> event:", event);
             // if dragging over fields with left mouse -> color field according to selected node type
             if (event.buttons === 1) {
                 console.log("mouse enter with left click");
