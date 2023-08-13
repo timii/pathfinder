@@ -22,6 +22,7 @@
         wall: false,
         searched: false,
         path: false,
+        grass: false,
     };
     const rows = 10;
     const cols = 10;

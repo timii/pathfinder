@@ -1,6 +1,6 @@
 <script lang="ts">
     import { algorithms } from "../algorithms/algorithms";
-    import type { IField } from "../interfaces/Field";
+    import type { IField, IFieldProp } from "../interfaces/Field";
     import type { ISelectItem } from "../interfaces/Select";
     import {
         currentGrid,
@@ -27,9 +27,15 @@
         if (grid) {
             grid.forEach((row: IField[]) => {
                 row.forEach((el: IField) => {
-                    el.searched = false;
-                    el.path = false;
-                    el.wall = false;
+                    Object.keys(el).forEach((key) => {
+                        if (
+                            key !== "id" &&
+                            key !== "start" &&
+                            key !== "finish"
+                        ) {
+                            el[key as IFieldProp] = false;
+                        }
+                    });
                 });
             });
             currentGrid.set(grid);

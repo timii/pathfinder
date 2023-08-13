@@ -1,13 +1,14 @@
 <script lang="ts">
     import { afterUpdate, onMount } from "svelte";
     import type { IField, IFieldProp } from "../interfaces/Field";
-    import { currentGrid } from "../store/store";
+    import { currentGrid, selectedNodeType } from "../store/store";
 
     export let fieldData: IField = {
         id: 0,
         start: false,
         finish: false,
         wall: false,
+        grass: false,
         searched: false,
         path: false,
     };
@@ -16,6 +17,7 @@
 
     const nodeColorMap = new Map<string, string>([
         ["wall", "#31C6D4"],
+        ["grass", "gray"],
         ["start", "#54B435"],
         ["finish", "#FF1E1E"],
         ["searched", "#FCE700"],
@@ -74,44 +76,27 @@
     });
 
     function setFieldColor() {
-        // nodeType = $selectedNodeType;
-
-        // check if start or finish value is true in fieldData to then change color accordingly
-        // console.log("onMount called -> fieldData:", fieldData);
-        if (
-            !fieldData.start &&
-            !fieldData.finish &&
-            !fieldData.searched &&
-            !fieldData.path &&
-            !fieldData.wall
-        ) {
+        if (!isFieldColored()) {
             color = nodeColorMap.get("default")!;
         }
-        if (fieldData.start) {
-            color = nodeColorMap.get("start")!;
-        }
-        if (fieldData.finish) {
-            color = nodeColorMap.get("finish")!;
-        }
-        if (fieldData.wall) {
-            color = nodeColorMap.get("wall")!;
-        }
-        if (fieldData.searched) {
-            color = nodeColorMap.get("searched")!;
-        }
-        if (fieldData.path) {
-            color = nodeColorMap.get("path")!;
+
+        // set color according to prop in fieldData that is set to true
+        const fieldProp = Object.keys(fieldData).find(
+            (key) => fieldData[key as IFieldProp] === true
+        );
+        if (fieldProp) {
+            color = nodeColorMap.get(fieldProp as IFieldProp)!;
         }
     }
 
     // function to write the grid with the changed field into the store
-    function setGrid(value: boolean) {
+    function setGrid(key: IFieldProp, value: boolean) {
         const grid: IField[][] = $currentGrid;
         const gridField = grid[firstIndex][secondIndex];
 
         grid[firstIndex][secondIndex] = {
             ...gridField,
-            wall: value,
+            [key]: value,
         };
 
         currentGrid.set(grid);
@@ -119,25 +104,45 @@
 
     function changeFieldData(fieldProp: IFieldProp, value: boolean) {
         fieldData[fieldProp] = value;
-        setGrid(value);
+        setGrid(fieldProp, value);
+    }
+
+    // reset field color to default color
+    function resetFieldColor() {
+        Object.keys(fieldData).forEach((key) => {
+            if (key !== "id") {
+                fieldData[key as IFieldProp] = false;
+            }
+        });
+    }
+
+    // check if field has any color currently
+    function isFieldColored() {
+        return Object.keys(fieldData).some((key) => {
+            return key !== "id" ? fieldData[key as IFieldProp] === true : false;
+        });
     }
 
     function handleClick(event: MouseEvent) {
         console.log("handleClick called -> event:", event);
         // only handle click if node is not a start or finish node
         if (!fieldData.start && !fieldData.finish) {
-            // left mouse click -> node is changed to a wall
+            // if left mouse button clicked
             if (event.buttons === 1) {
                 console.log("left mouse clicked");
-                color = nodeColorMap.get("wall")!;
-                changeFieldData("wall", true);
-            }
-
-            // right mouse click -> node is reset to starting color
-            if (event.button === 2) {
-                console.log("right mouse clicked");
-                color = nodeColorMap.get("default")!;
-                changeFieldData("wall", false);
+                // if field is already colored -> reset to default color
+                if (isFieldColored()) {
+                    console.log("field is already colored");
+                    resetFieldColor();
+                }
+                // if field has no color -> color it according to node type
+                else {
+                    console.log("field is not yet colored");
+                    const nodeType: string = $selectedNodeType;
+                    const fieldProp = nodeType.toLowerCase() as IFieldProp;
+                    console.log("selected node type:", fieldProp);
+                    changeFieldData(fieldProp, true);
+                }
             }
         }
 
@@ -193,16 +198,14 @@
     function handleMouseEnter(event: MouseEvent) {
         if (!fieldData.start && !fieldData.finish) {
             // console.log("handleMouseEnter -> event:", event);
+            // if dragging over fields with left mouse -> color field according to selected node type
             if (event.buttons === 1) {
                 console.log("mouse enter with left click");
-                color = nodeColorMap.get("wall")!;
-                changeFieldData("wall", true);
-            }
-
-            if (event.buttons === 2) {
-                console.log("mouse enter with right click");
-                color = nodeColorMap.get("default")!;
-                changeFieldData("wall", false);
+                // color = nodeColorMap.get("wall")!;
+                const nodeType: string = $selectedNodeType;
+                const fieldProp = nodeType.toLowerCase() as IFieldProp;
+                console.log("selected node type:", fieldProp);
+                changeFieldData(fieldProp, true);
             }
         }
     }
