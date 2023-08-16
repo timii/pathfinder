@@ -1,5 +1,5 @@
 import type { IField, IFieldProp } from "../interfaces/Field";
-import type { IPosition, IPositionWithId } from "../interfaces/Position";
+import type { IPosition, IPositionWithId, IPositionWithIdAndWeight } from "../interfaces/Position";
 import { currentGrid, fieldsSearched, isVisualizing, pathLength, showStats } from "../store/store";
 
 // function to return the indeces of a field using its prop name
@@ -34,8 +34,8 @@ export function getRandomInt(min = 1, max: number) {
     return Math.floor(Math.random() * (max - min) + min)
 }
 
-// function to get all adjacent fields to a given position
-export function getAllAdjacentFieldPositions(grid: IField[][], firstIndex: number, secondIndex: number) {
+// function to get all adjacent empty fields to a given position which will only be added if they don't already exist in `arrayToCheck`
+export function getAllAdjacentFieldPositions(grid: IField[][], firstIndex: number, secondIndex: number, arrayToCheck: IPositionWithId[] | IPositionWithIdAndWeight[]) {
     const neighbours: IPositionWithId[] = []
     const rowMax = grid[0].length
     const colMax = grid.length
@@ -43,30 +43,39 @@ export function getAllAdjacentFieldPositions(grid: IField[][], firstIndex: numbe
 
     // check field above
     const fieldAbove = [firstIndex - 1, secondIndex]
-    if (firstIndex - 1 >= 0 && isFieldEmtpyAndExist(grid, fieldAbove[0], fieldAbove[1])) {
-        neighbours.push({ firstIndex: fieldAbove[0], secondIndex: fieldAbove[1], id: grid[fieldAbove[0]][fieldAbove[1]].id })
+    if (firstIndex - 1 >= 0 && isFieldEmtpyAndExist(grid, fieldAbove[0], fieldAbove[1]) && !doesFieldExistInArray(arrayToCheck, grid[fieldAbove[0]][fieldAbove[1]].id)) {
+        const elementAbove = grid[fieldAbove[0]][fieldAbove[1]]
+        neighbours.push({ firstIndex: fieldAbove[0], secondIndex: fieldAbove[1], id: elementAbove.id })
     }
 
     // check field below
     const fieldBelow = [firstIndex + 1, secondIndex]
-    if (firstIndex + 1 < colMax && isFieldEmtpyAndExist(grid, fieldBelow[0], fieldBelow[1])) {
-        neighbours.push({ firstIndex: fieldBelow[0], secondIndex: fieldBelow[1], id: grid[fieldBelow[0]][fieldBelow[1]].id })
+    if (firstIndex + 1 < colMax && isFieldEmtpyAndExist(grid, fieldBelow[0], fieldBelow[1]) && !doesFieldExistInArray(arrayToCheck, grid[fieldBelow[0]][fieldBelow[1]].id)) {
+        const elementBelow = grid[fieldBelow[0]][fieldBelow[1]]
+        neighbours.push({ firstIndex: fieldBelow[0], secondIndex: fieldBelow[1], id: elementBelow.id })
     }
 
     // check field to the left
     const fieldToTheLeft = [firstIndex, secondIndex - 1]
-    if (secondIndex - 1 >= 0 && isFieldEmtpyAndExist(grid, fieldToTheLeft[0], fieldToTheLeft[1])) {
-        neighbours.push({ firstIndex: fieldToTheLeft[0], secondIndex: fieldToTheLeft[1], id: grid[fieldToTheLeft[0]][fieldToTheLeft[1]].id })
+    if (secondIndex - 1 >= 0 && isFieldEmtpyAndExist(grid, fieldToTheLeft[0], fieldToTheLeft[1]) && !doesFieldExistInArray(arrayToCheck, grid[fieldToTheLeft[0]][fieldToTheLeft[1]].id)) {
+        const elementToTheLeft = grid[fieldToTheLeft[0]][fieldToTheLeft[1]]
+        neighbours.push({ firstIndex: fieldToTheLeft[0], secondIndex: fieldToTheLeft[1], id: elementToTheLeft.id })
     }
 
     // check field to the right
     const fieldToTheRight = [firstIndex, secondIndex + 1]
-    if (secondIndex + 1 < rowMax && isFieldEmtpyAndExist(grid, fieldToTheRight[0], fieldToTheRight[1])) {
-        neighbours.push({ firstIndex: fieldToTheRight[0], secondIndex: fieldToTheRight[1], id: grid[fieldToTheRight[0]][fieldToTheRight[1]].id })
+    if (secondIndex + 1 < rowMax && isFieldEmtpyAndExist(grid, fieldToTheRight[0], fieldToTheRight[1]) && !doesFieldExistInArray(arrayToCheck, grid[fieldToTheRight[0]][fieldToTheRight[1]].id)) {
+        const elementToTheRight = grid[fieldToTheRight[0]][fieldToTheRight[1]]
+        neighbours.push({ firstIndex: fieldToTheRight[0], secondIndex: fieldToTheRight[1], id: elementToTheRight.id })
     }
 
     console.log("getAllAdjacentFieldPositions -> neighbours:", neighbours)
     return neighbours
+}
+
+// function to check if a field, using its id, already exists in a given array
+export function doesFieldExistInArray(arrayToCheck: IPositionWithId[] | IPositionWithIdAndWeight[], id: number): boolean {
+    return arrayToCheck.findIndex(el => el.id === id) !== -1
 }
 
 // function to check if a field at given indeces exists and if it's empty 
@@ -212,4 +221,12 @@ export function calculateLastDirection(lastField: IPosition, currentField: IPosi
     const beforeLastYDirection = lastField.firstIndex - currentField.firstIndex
     const beforeLastXDirection = lastField.secondIndex - currentField.secondIndex
     return { firstIndex: beforeLastYDirection, secondIndex: beforeLastXDirection }
+}
+
+// function to get the lowest step cost from a given array of fields
+export function getLowestCost(fields: IPositionWithIdAndWeight[]) {
+    console.log("getLowestCost -> fields:", fields)
+    const minField = fields.reduce((a, b) => a.weight < b.weight ? a : b)
+    // console.log("getLowestCost -> minField:", minField, minField.weight)
+    return minField.weight || 1
 }
