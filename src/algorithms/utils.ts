@@ -226,7 +226,10 @@ export function calculateLastDirection(lastField: IPosition, currentField: IPosi
 // function to get the lowest step cost from a given array of fields
 export function getLowestCost(fields: IPositionWithIdAndWeight[]) {
     console.log("getLowestCost -> fields:", fields)
-    const minField = fields.reduce((a, b) => a.weight < b.weight ? a : b)
-    // console.log("getLowestCost -> minField:", minField, minField.weight)
-    return minField.weight || 1
+    if (fields.length > 0) {
+        const minField = fields.reduce((a, b) => a.weight < b.weight ? a : b)
+        return minField.weight || 1
+    } else {
+        return 0
+    }
 }
