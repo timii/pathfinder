@@ -5,15 +5,19 @@
 
     export let fieldData: IField = {
         id: 0,
+        weight: 1,
         start: false,
         finish: false,
         path: false,
         wall: false,
         grass: false,
         searched: false,
+        x: 0,
+        y: 0,
     };
-    export let firstIndex: number;
-    export let secondIndex: number;
+    // export let firstIndex: number;
+    // export let secondIndex: number;
+    console.log("Field:", fieldData);
 
     const nodeColorMap = new Map<string, string>([
         ["wall", "#31C6D4"],
@@ -33,21 +37,22 @@
         fieldData.searched ||
         fieldData.wall;
     let startOrFinishNode = fieldData.start || fieldData.finish;
-    let borderField = {
-        topBorder: firstIndex === 0,
-        rightBorder: secondIndex === 9,
-        bottomBorder: firstIndex === 9,
-        leftBorder: secondIndex === 0,
-    };
+    // TODO: set dynamic maxRow and maxCol and remove hardcoded 9
+    // let borderField = {
+    //     topBorder: firstIndex === 0,
+    //     rightBorder: secondIndex === 9,
+    //     bottomBorder: firstIndex === 9,
+    //     leftBorder: secondIndex === 0,
+    // };
 
     // set correct border widths for fields at the edges of the grid
     const getBorderStyle = (val: boolean, styleName: string) =>
         val ? styleName + ":2px" : styleName + ":1px";
-    const fieldBorderStyles = `
-    ${getBorderStyle(borderField.topBorder, "border-top-width")};
-    ${getBorderStyle(borderField.rightBorder, "border-right-width")};
-    ${getBorderStyle(borderField.bottomBorder, "border-bottom-width")};
-    ${getBorderStyle(borderField.leftBorder, "border-left-width")};`;
+    // const fieldBorderStyles = `
+    // ${getBorderStyle(borderField.topBorder, "border-top-width")};
+    // ${getBorderStyle(borderField.rightBorder, "border-right-width")};
+    // ${getBorderStyle(borderField.bottomBorder, "border-bottom-width")};
+    // ${getBorderStyle(borderField.leftBorder, "border-left-width")};`;
     // console.log("field -> fieldBorderStyles:", fieldBorderStyles);
 
     // console.log(
@@ -99,10 +104,11 @@
 
     // function to write the grid with the changed field into the store
     function setGrid(newFieldData: IField) {
+        console.log("setGrid -> x:", fieldData.x, fieldData.y, newFieldData);
         const grid: IField[][] = $currentGrid;
-        const gridField = grid[firstIndex][secondIndex];
+        const gridField = grid[fieldData.y][fieldData.x];
 
-        grid[firstIndex][secondIndex] = {
+        grid[fieldData.y][fieldData.x] = {
             ...gridField,
             ...newFieldData,
         };
@@ -125,7 +131,12 @@
     // reset field color to default color
     function resetFieldColor() {
         Object.keys(fieldData).forEach((key) => {
-            if (key !== "id" && key !== "weight") {
+            if (
+                key !== "id" &&
+                key !== "weight" &&
+                key !== "x" &&
+                key !== "y"
+            ) {
                 fieldData[key as IFieldProp] = false;
             }
         });
@@ -267,7 +278,7 @@
     class="field hover:cursor-pointer w-8 h-8 border-solid border-zinc-200 border"
     style="background-color: {color}; cursor: {startOrFinishNode
         ? 'default'
-        : 'pointer'};"
+        : 'pointer'}; border-color: {fieldData.searched ? 'yellow' : 'white'}"
 />
 
 <style lang="postcss">
