@@ -1,6 +1,6 @@
-import type { IField, IFieldProp } from "../interfaces/Field";
-import type { IPosition, IPositionWithId, IPositionWithIdAndWeight } from "../interfaces/Position";
-import { currentGrid, fieldsSearched, isVisualizing, pathLength, showStats } from "../store/store";
+import type { IField, IFieldProp } from "../../interfaces/Field";
+import type { IPosition, IPositionWithId, IPositionWithIdAndWeight } from "../../interfaces/Position";
+import { currentGrid, fieldsSearched, isVisualizing, pathLength, showStats } from "../../store/store";
 
 // function to return the indeces of a field using its prop name
 export function getFieldPositionByProp(grid: IField[][], property: IFieldProp): IPositionWithId | undefined {
@@ -11,6 +11,18 @@ export function getFieldPositionByProp(grid: IField[][], property: IFieldProp): 
             let pos: IPositionWithId = { firstIndex: i, secondIndex: index, id: grid[i][index].id };
             // console.log("getFieldPosition -> pos in for loop:", pos)
             return pos
+        }
+    }
+    return undefined
+}
+
+// function to return the field using its prop name
+export function getFieldByProp(grid: IField[][], property: IFieldProp): IField | undefined {
+    // console.log("getFieldPosition -> grid:", grid)
+    for (var i = 0; i < grid.length; i++) {
+        var field = grid[i].find(field => field[property] === true);
+        if (field) {
+            return field
         }
     }
     return undefined
@@ -34,7 +46,32 @@ export function getRandomInt(min = 1, max: number) {
     return Math.floor(Math.random() * (max - min) + min)
 }
 
-// function to get all adjacent empty fields to a given position which will only be added if they don't already exist in `arrayToCheck`
+// get the cost of a given neighbour field
+export function getStepCost(neighbour: IField) {
+    return neighbour.weight || 1
+}
+
+// check if a given field is the finish field
+export function isFinish(field: IField) {
+    return field.finish === true
+}
+
+// get all adjacent fields using a given x and y 
+export function getAllAdjacentFields(grid: IField[][], x: number, y: number) {
+    let neighbours: IField[] = []
+    let neighbourIndeces: number[][] = [[x, y - 1], [x, y + 1], [x - 1, y], [x + 1, y]]
+
+    neighbourIndeces.forEach(([nX, nY]) => {
+        // console.log("getAllAdjacentFields in for each -> nx:", nX, "nY:", nY)
+        if (isMoveToFieldPossible(grid, { firstIndex: nY, secondIndex: nX })) {
+            neighbours.push(grid[nY][nX])
+        }
+    })
+    // console.log("getAllAdjacentFields -> neighbours:", neighbours)
+    return neighbours || []
+}
+
+// function to get all adjacent empty field positions to a given position which will only be added if they don't already exist in `arrayToCheck`
 export function getAllAdjacentFieldPositions(grid: IField[][], firstIndex: number, secondIndex: number, arrayToCheck: IPositionWithId[] | IPositionWithIdAndWeight[]) {
     const neighbours: IPositionWithId[] = []
     const rowMax = grid[0].length
@@ -101,10 +138,6 @@ export function isEveryFieldSearched(grid: IField[][]) {
     return grid.every((row, i) => row.every((_, j) => !isFieldEmtpyAndExist(grid, i, j)))
 }
 
-export function isWholeColumnEmpty(grid: IField[][], colIndex: number) {
-    return grid.every(row => !row[colIndex].searched && !row[colIndex].wall)
-}
-
 // function to get the next field given a grid and two indeces
 export function getNextField(grid: IField[][], firstIndex: number, secondIndex: number, rowMax: number, colMax: number, lastDirection: IPosition) {
 
@@ -161,6 +194,15 @@ export function isMoveInDirectionPossible(grid: IField[][], curPosition: IPositi
     return newFirstIndex < colMax && newFirstIndex >= 0 && newSecondIndex < rowMax && newSecondIndex >= 0 && isFieldEmtpyAndExist(grid, newFirstIndex, newSecondIndex, false, true)
 }
 
+export function isMoveToFieldPossible(grid: IField[][], neighbourIndeces: IPosition) {
+    const rowMax = grid[0].length
+    const colMax = grid.length
+
+    // console.log("isMoveToFieldPossible -> neighbourIndeces:", neighbourIndeces)
+
+    return neighbourIndeces.firstIndex < colMax && neighbourIndeces.firstIndex >= 0 && neighbourIndeces.secondIndex < rowMax && neighbourIndeces.secondIndex >= 0
+}
+
 // function to get the shortest path using a given map of ids
 export function getShortestPath(cameFromMap: Map<number, number>, startId: number, finishId: number, amountOfFields: number) {
     let current = finishId
@@ -182,7 +224,6 @@ export function getShortestPath(cameFromMap: Map<number, number>, startId: numbe
 }
 
 export function drawShortestPath(grid: IField[][], path: number[]) {
-
     // set fieldSearched for stats
     let fieldsSearchedAmount = 0
     grid.forEach(row => row.forEach(field => {
@@ -232,4 +273,20 @@ export function getLowestCost(fields: IPositionWithIdAndWeight[]) {
     } else {
         return 0
     }
+}
+
+// function to divide a given array into two seperate ones using a given filter
+export function partitionArray(array: IPositionWithIdAndWeight[], filter: (el: IPositionWithIdAndWeight) => boolean) {
+    const pass: typeof array = []
+    const fail: typeof array = []
+
+    array.forEach(el => {
+        if (filter(el))
+            pass.push(el);
+        else
+            fail.push(el);
+    })
+
+    console.log("partitionArray -> pass:", pass, "fail:", fail)
+    return [pass, fail];
 }
