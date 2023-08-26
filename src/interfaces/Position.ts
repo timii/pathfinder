@@ -5,4 +5,4 @@ export interface IPosition {
 
 export type IPositionWithId = IPosition & { id: number }
 
-export type IPositionWithIdAndPrio = IPosition & { id: number } & { prio: number }
+export type IPositionWithIdAndWeight = IPosition & { id: number } & { weight: number }
