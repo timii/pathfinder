@@ -21,4 +21,5 @@ export const isVisualizing = createStoreValue(false);
 export const showStats = createStoreValue(false);
 
 export const pathLength = createStoreValue(0);
+export const pathStepCost = createStoreValue(0);
 export const fieldsSearched = createStoreValue(0);

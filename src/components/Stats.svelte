@@ -1,5 +1,10 @@
 <script lang="ts">
-    import { fieldsSearched, pathLength, showStats } from "../store/store";
+    import {
+        fieldsSearched,
+        pathLength,
+        pathStepCost,
+        showStats,
+    } from "../store/store";
 </script>
 
 {#if $showStats}
@@ -12,6 +17,8 @@
         <div class="flex flex-col items-center">
             <p>Shortest Path Length</p>
             <p>{$pathLength}</p>
+            <p>Shortest Path Total Step Cost</p>
+            <p>{$pathStepCost}</p>
             <p>Amount of Fields Searched</p>
             <p>{$fieldsSearched}</p>
         </div>
