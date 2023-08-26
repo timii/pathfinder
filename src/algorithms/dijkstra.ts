@@ -1,70 +1,80 @@
 import type { IField } from "../interfaces/Field";
-import type { IPositionWithId, IPositionWithIdAndPrio } from "../interfaces/Position";
-import { currentGrid, isVisualizing } from "../store/store";
-import { drawShortestPath, getAllAdjacentFieldPositions, getFieldPositionByProp, getShortestPath, isEveryFieldSearched, isFieldEmtpyAndExist } from "./utils";
+import type { IQueueItem } from "../interfaces/Queue";
+import { currentGrid, isVisualizing, pathStepCost } from "../store/store";
+import { priorityQueue } from "./utils/priorityQueue";
+import { getFieldByProp, getAllAdjacentFields, isFinish, getStepCost, drawShortestPath, getShortestPath } from "./utils/utils";
 
 export function dijkstra(grid: IField[][]) {
-    console.log("dijkstra called -> grid:", grid)
+
     const rowMax = grid[0].length
     const colMax = grid.length
-    const startNode = getFieldPositionByProp(grid, "start")
-    const finishNode = getFieldPositionByProp(grid, "finish")
-    // map to keep track of where we came from (key: next field, value: current field)
-    let cameFromMap = new Map<number, number>()
+    const startNode = getFieldByProp(grid, "start")
+    const finishNode = getFieldByProp(grid, "finish")
+    let finalCost = 0
 
     if (startNode && finishNode) {
-        // map to keep track of the cost of movements so far (key: next field, value: prio)
-        let costSoFarMap = new Map<number, number>([[startNode.id, 0]])
-        let fieldsToCheck: IPositionWithIdAndPrio[] = [{ ...startNode, prio: 0 }]
-        let fieldsToCheckWithoutStartAndFinish: IPositionWithIdAndPrio[] = []
-        let neighbours: IPositionWithIdAndPrio[] = []
-        // let i = 0
 
+        // create new priorityQueue and add the startNode to it with a priority of 0
+        let queue = priorityQueue()
+        queue.enqueue(startNode, 0)
+
+        // create map to keep track of distances to each field
+        let distances = new Map<IField, number>([[startNode, 0]])
+        // keep track of all the fields to check next
+        let fieldsToCheck: IField[] = []
+        // keep track of unique neighbours
+        let neighbours: Set<IField> = new Set()
+        // keep track of where we came from to construct path later
+        let cameFromMap = new Map<number, number>()
+
+        // while (!queue.isEmpty()) {
         const searchInterval = setInterval(() => {
-            console.log("in while -> fieldsToCheck:", fieldsToCheck, "neighbours:", neighbours, "cameFromMap:", cameFromMap)
+
+            const lowestPrioElements: IQueueItem[] = queue.dequeueAllLowest()
+            fieldsToCheck = lowestPrioElements.map(item => item.key)
+            neighbours.clear()
+
             if (fieldsToCheck.length > 0) {
 
                 // get all the adjacent fields of each field that we have to check
-                fieldsToCheck.forEach(field => {
+                fieldsToCheck.forEach((field) => {
 
-                    // map each neighbour to also include the prio
-                    const newNeighbours = [...getAllAdjacentFieldPositions(grid, field.firstIndex, field.secondIndex)].map(el => { return { ...el, prio: 0 } as IPositionWithIdAndPrio })
+                    if (!field.start && !field.finish) {
+                        field.searched = true
+                    }
 
-                    neighbours.push(...newNeighbours)
-                    neighbours.forEach(el => {
-                        if (!cameFromMap.has(el.id)) {
-                            cameFromMap.set(el.id, field.id)
+                    const newNeighbours = [...getAllAdjacentFields(grid, field.x, field.y)].map(neighbour => {
+                        // calculate new step cost using the current field cost + the cost of the neighbour
+                        const newDistance = (distances.get(field) || 0) + getStepCost(neighbour)
+
+                        // add calculated distance to map to know how much the step to the neighbour costs
+                        if (!distances.has(neighbour)) {
+                            distances.set(neighbour, newDistance)
                         }
+
+                        // add neighbour + calculated distance to queue 
+                        queue.enqueue(neighbour, newDistance)
+
+                        if (!cameFromMap.has(neighbour.id)) {
+                            cameFromMap.set(neighbour.id, field.id)
+                        }
+
+                        return neighbour
                     })
-                    // console.log("in for each -> field:", field, "neighbours:", neighbours)
+
+                    // only add unique neighbours to negighbours array
+                    newNeighbours.forEach(e => neighbours.add(e))
                 })
 
-                // const neighbours = getAllAdjacentFieldPositions(grid, startNode.firstIndex, startNode.secondIndex)
-                console.log("bfs function called -> startNode:", startNode, "finishNode:", finishNode, "neighbours:", neighbours, "cameFromMap:", cameFromMap);
-
-                if (neighbours.length > 0) {
-                    fieldsToCheck = []
-
-                    // new fields to check are the neighbours from the field that we checked before
-                    fieldsToCheck = [...neighbours]
-
-                    // create a second array with all neighbours in it, but filter every field out that isn't empty
-                    fieldsToCheckWithoutStartAndFinish = neighbours.filter((el => isFieldEmtpyAndExist(grid, el.firstIndex, el.secondIndex, true)))
-
-                    neighbours.forEach(field => {
-                        const element = grid[field.firstIndex][field.secondIndex]
-                        if (!element.start && !element.finish) {
-                            element.searched = true
-                        }
-                    })
-                    neighbours = []
-                }
                 currentGrid.set(grid)
 
-                // console.log("end of interval -> isEveryFieldSearched(grid):", isEveryFieldSearched(grid), " cameFromMap.has(finishNode.id):", cameFromMap.has(finishNode.id), "fieldsToCheckWithoutStartAndFinish.length === 0:", fieldsToCheckWithoutStartAndFinish.length === 0, fieldsToCheckWithoutStartAndFinish)
+                // check if we have arrived at the finish field
+                if (Array.from(neighbours).some(e => e.finish === true) || cameFromMap.has(finishNode.id)) {
+                    finalCost = lowestPrioElements[0].priority
 
-                // stop checking for fields if every field is not empty or a path to the finish field has been found
-                if (isEveryFieldSearched(grid) || cameFromMap.has(finishNode.id) || fieldsToCheckWithoutStartAndFinish.length === 0) {
+                    // add one to the final cost to include the step to the finish
+                    pathStepCost.set(finalCost + 1)
+
                     clearInterval(searchInterval)
 
                     // get path from start to finish
@@ -74,9 +84,6 @@ export function dijkstra(grid: IField[][]) {
                     drawShortestPath(grid, path)
                 }
             }
-        }, 250)
+        }, 150)
     }
-
-    isVisualizing.set(false)
 }
-
