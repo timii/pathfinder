@@ -17,7 +17,7 @@
     };
     // export let firstIndex: number;
     // export let secondIndex: number;
-    console.log("Field:", fieldData);
+    // console.log("Field:", fieldData);
 
     const nodeColorMap = new Map<string, string>([
         ["wall", "#31C6D4"],

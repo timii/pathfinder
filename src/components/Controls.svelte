@@ -30,6 +30,7 @@
                     Object.keys(el).forEach((key) => {
                         if (
                             key !== "id" &&
+                            key !== "weight" &&
                             key !== "start" &&
                             key !== "finish"
                         ) {
@@ -73,7 +74,7 @@
 
     // initially select wall as node type
     // TODO: add check later if node type is already set in localStorage
-    let nodeStartValue: { label: string; value: string } = nodeTypes[0];
+    let nodeStartValue: { label: string; value: string } = nodeTypes[1];
     selectedNodeType.set(nodeStartValue.label);
 
     function nodeOnChange(event: CustomEvent) {

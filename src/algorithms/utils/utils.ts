@@ -200,7 +200,7 @@ export function isMoveToFieldPossible(grid: IField[][], neighbourIndeces: IPosit
 
     // console.log("isMoveToFieldPossible -> neighbourIndeces:", neighbourIndeces)
 
-    return neighbourIndeces.firstIndex < colMax && neighbourIndeces.firstIndex >= 0 && neighbourIndeces.secondIndex < rowMax && neighbourIndeces.secondIndex >= 0
+    return neighbourIndeces.firstIndex < colMax && neighbourIndeces.firstIndex >= 0 && neighbourIndeces.secondIndex < rowMax && neighbourIndeces.secondIndex >= 0 && isFieldEmtpyAndExist(grid, neighbourIndeces.firstIndex, neighbourIndeces.secondIndex, false, true)
 }
 
 // function to get the shortest path using a given map of ids
