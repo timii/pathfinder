@@ -3,6 +3,7 @@ import { aStar } from "./a-star";
 import { bfs } from "./bfs";
 import { dfs } from "./dfs";
 import { dijkstra } from "./dijkstra";
+import { gbfs } from "./gbfs";
 
 export const algorithms: IAlgorithm[] = [
     {
@@ -21,4 +22,11 @@ export const algorithms: IAlgorithm[] = [
         name: "A*",
         functionCallback: aStar,
     },
+    {
+        name: "Uniform Cost Search",
+    },
+    {
+        name: "Greedy Best First Search",
+        functionCallback: gbfs
+    }
 ];
