@@ -1,8 +1,8 @@
 import type { IField } from "../interfaces/Field";
 import type { IQueueItem } from "../interfaces/Queue";
-import { currentGrid, isVisualizing, pathStepCost } from "../store/store";
+import { currentGrid, pathStepCost } from "../store/store";
 import { priorityQueue } from "./utils/priorityQueue";
-import { getFieldByProp, getAllAdjacentFields, isFinish, getStepCost, drawShortestPath, getShortestPath } from "./utils/utils";
+import { getFieldByProp, getAllAdjacentFields, getStepCost, drawShortestPath, getShortestPath } from "./utils/utils";
 
 export function dijkstra(grid: IField[][]) {
 
@@ -27,7 +27,6 @@ export function dijkstra(grid: IField[][]) {
         // keep track of where we came from to construct path later
         let cameFromMap = new Map<number, number>()
 
-        // while (!queue.isEmpty()) {
         const searchInterval = setInterval(() => {
 
             const lowestPrioElements: IQueueItem[] = queue.dequeueAllLowest()
@@ -39,11 +38,13 @@ export function dijkstra(grid: IField[][]) {
                 // get all the adjacent fields of each field that we have to check
                 fieldsToCheck.forEach((field) => {
 
+                    // mark each field as searched
                     if (!field.start && !field.finish) {
                         field.searched = true
                     }
 
-                    const newNeighbours = [...getAllAdjacentFields(grid, field.x, field.y)].map(neighbour => {
+                    // get all neighbours of the current field
+                    getAllAdjacentFields(grid, field.x, field.y).forEach(neighbour => {
                         // calculate new step cost using the current field cost + the cost of the neighbour
                         const newDistance = (distances.get(field) || 0) + getStepCost(neighbour)
 
@@ -55,15 +56,14 @@ export function dijkstra(grid: IField[][]) {
                         // add neighbour + calculated distance to queue 
                         queue.enqueue(neighbour, newDistance)
 
+                        // add neighbour key + currenf field value into map
                         if (!cameFromMap.has(neighbour.id)) {
                             cameFromMap.set(neighbour.id, field.id)
                         }
 
-                        return neighbour
+                        // add unique neighbours to neighbours array
+                        neighbours.add(neighbour)
                     })
-
-                    // only add unique neighbours to negighbours array
-                    newNeighbours.forEach(e => neighbours.add(e))
                 })
 
                 currentGrid.set(grid)
@@ -84,6 +84,6 @@ export function dijkstra(grid: IField[][]) {
                     drawShortestPath(grid, path)
                 }
             }
-        }, 150)
+        }, 50)
     }
 }
