@@ -1,6 +1,6 @@
 import type { IField } from "../interfaces/Field";
 import { currentGrid } from "../store/store";
-import { drawShortestPath, getAllAdjacentFields, getFieldByProp, getShortestPath } from "./utils/utils";
+import { drawShortestPath, getAllAdjacentFields, getFieldByProp, getShortestPath, isEveryFieldSearched } from "./utils/utils";
 
 // function for the breadth first search algorithm
 export function bfs(grid: IField[][]) {
@@ -22,6 +22,7 @@ export function bfs(grid: IField[][]) {
         const searchInterval = setInterval(() => {
 
             fieldsToCheck = [...Array.from(neighbours)]
+            neighbours.clear()
 
             if (fieldsToCheck.length > 0) {
 
@@ -49,14 +50,20 @@ export function bfs(grid: IField[][]) {
                 currentGrid.set(grid)
 
                 // check if we have arrived at the finish field
-                if (Array.from(neighbours).some(e => e.finish === true) || cameFromMap.has(finishNode.id)) {
+                if (isEveryFieldSearched(grid) || (Array.from(neighbours).some(e => e.finish === true) || cameFromMap.has(finishNode.id)) || neighbours.size === 0) {
+
                     clearInterval(searchInterval)
 
-                    // get path from start to finish
-                    const path = getShortestPath(cameFromMap, startNode.id, finishNode.id, colMax * rowMax)
+                    // only get and draw shortest path when we reached the finish
+                    const reachedFinish = cameFromMap.has(finishNode.id)
+                    if (reachedFinish) {
 
-                    // draw path to grid
-                    drawShortestPath(grid, path)
+                        // get path from start to finish
+                        const path = getShortestPath(cameFromMap, startNode.id, finishNode.id, colMax * rowMax)
+
+                        // draw path to grid
+                        drawShortestPath(grid, path)
+                    }
                 }
             }
         }, 50)

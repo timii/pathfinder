@@ -2,7 +2,7 @@ import type { IField } from "../interfaces/Field";
 import type { IQueueItem } from "../interfaces/Queue";
 import { currentGrid, pathStepCost } from "../store/store";
 import { priorityQueue } from "./utils/priorityQueue";
-import { getFieldByProp, getAllAdjacentFields, getStepCost, drawShortestPath, getShortestPath } from "./utils/utils";
+import { getFieldByProp, getAllAdjacentFields, getStepCost, drawShortestPath, getShortestPath, isEveryFieldSearched } from "./utils/utils";
 
 export function dijkstra(grid: IField[][]) {
 
@@ -68,20 +68,26 @@ export function dijkstra(grid: IField[][]) {
 
                 currentGrid.set(grid)
 
-                // check if we have arrived at the finish field
-                if (Array.from(neighbours).some(e => e.finish === true) || cameFromMap.has(finishNode.id)) {
-                    finalCost = lowestPrioElements[0].priority
 
-                    // add one to the final cost to include the step to the finish
-                    pathStepCost.set(finalCost + 1)
+                // check if we have arrived at the finish field
+                if (isEveryFieldSearched(grid) || Array.from(neighbours).some(e => e.finish === true) || cameFromMap.has(finishNode.id) || neighbours.size === 0) {
+                    finalCost = lowestPrioElements[0].priority
 
                     clearInterval(searchInterval)
 
-                    // get path from start to finish
-                    const path = getShortestPath(cameFromMap, startNode.id, finishNode.id, colMax * rowMax)
+                    // only get and draw shortest path when we reached the finish
+                    const reachedFinish = cameFromMap.has(finishNode.id)
+                    if (reachedFinish) {
 
-                    // draw path to grid
-                    drawShortestPath(grid, path)
+                        // add one to the final cost to include the step to the finish
+                        pathStepCost.set(finalCost + 1)
+
+                        // get path from start to finish
+                        const path = getShortestPath(cameFromMap, startNode.id, finishNode.id, colMax * rowMax)
+
+                        // draw path to grid
+                        drawShortestPath(grid, path)
+                    }
                 }
             }
         }, 50)

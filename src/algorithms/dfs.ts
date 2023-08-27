@@ -1,34 +1,45 @@
 import type { IField } from "../interfaces/Field";
-import type { IPosition, IPositionWithId } from "../interfaces/Position";
+import type { IPosition } from "../interfaces/Position";
 import { currentGrid, isVisualizing } from "../store/store";
-import { calculateLastDirection, drawShortestPath, getFieldPositionByProp, getNextField, getShortestPath, isEveryFieldSearched, isFieldEmtpyAndExist } from "./utils";
+import { calculateLastDirection, drawShortestPath, getFieldByProp, getNextField, getShortestPath, isEveryFieldSearched } from "./utils/utils";
 
 export function dfs(grid: IField[][]) {
     const rowMax = grid[0].length
     const colMax = grid.length
-    const startNode = getFieldPositionByProp(grid, "start")
-    const finishNode = getFieldPositionByProp(grid, "finish")
-    // map to keep track of where we came from (key: next field, value: current field)
-    let cameFromMap = new Map<number, number>()
-    // set a default direction of going up at the start
-    let lastDircetion: IPosition = { firstIndex: -1, secondIndex: 0 }
+    const startNode = getFieldByProp(grid, "start")
+    const finishNode = getFieldByProp(grid, "finish")
 
     if (startNode && finishNode) {
-        let fieldsToCheck: IPositionWithId[] = [startNode]
-        let fieldsToCheckWithoutStartAndFinish: IPositionWithId[] = []
-        let neighbours: IPositionWithId[] = []
-        let lastThreeFields: IPositionWithId[] = [startNode]
+
+        // keep track of where we came from to construct path later
+        let cameFromMap = new Map<number, number>()
+        // set a default direction of going up at the start
+        let lastDircetion: IPosition = { firstIndex: -1, secondIndex: 0 }
+        // keep track of all the fields to check next
+        let fieldsToCheck: IField[] = [startNode]
+        let fieldsToCheckWithoutStartAndFinish: IField[] = []
+        // keep track of unique neighbours
+        let neighbours: Set<IField> = new Set([startNode])
+        // keep track of the last three fields visited
+        let lastThreeFields: IField[] = [startNode]
 
         const searchInterval = setInterval(() => {
 
-            if (fieldsToCheck.length > 0) {
-                fieldsToCheck.forEach(field => {
-                    console.log("dfs -> field:", field, field.firstIndex, field.secondIndex)
-                    const nextField = getNextField(grid, field.firstIndex, field.secondIndex, rowMax, colMax, lastDircetion)
-                    if (nextField) {
-                        console.log("next field is defined:", nextField)
+            fieldsToCheck = [...Array.from(neighbours)]
+            neighbours.clear()
 
-                        neighbours = [nextField]
+            if (fieldsToCheck.length > 0) {
+
+                fieldsToCheck.forEach(field => {
+                    const nextField = getNextField(grid, field.y, field.x, rowMax, colMax, lastDircetion)
+                    if (nextField) {
+
+                        neighbours = new Set([nextField])
+
+                        // mark each field as searched
+                        if (!field.start && !field.finish) {
+                            field.searched = true
+                        }
 
                         // keep track of the last fields visited
                         if (lastThreeFields.length !== 3) {
@@ -54,38 +65,24 @@ export function dfs(grid: IField[][]) {
                 })
             }
 
-            if (neighbours.length > 0) {
-                fieldsToCheck = []
-
-                // new fields to check are the neighbours from the field that we checked before
-                fieldsToCheck = [...neighbours]
-
-                // create a second array with all neighbours in it, but filter every field out that isn't empty
-                fieldsToCheckWithoutStartAndFinish = neighbours.filter((el => isFieldEmtpyAndExist(grid, el.firstIndex, el.secondIndex, true)))
-
-                // mark each neighbour as searched 
-                neighbours.forEach(field => {
-                    const element = grid[field.firstIndex][field.secondIndex]
-                    if (!element.start && !element.finish)
-                        element.searched = true
-                })
-                neighbours = []
-            }
             currentGrid.set(grid)
 
 
             // stop checking for fields if every field is not empty or a path to the finish field has been found
-            if (isEveryFieldSearched(grid) || cameFromMap.has(finishNode.id) || fieldsToCheckWithoutStartAndFinish.length === 0) {
+            if (isEveryFieldSearched(grid) || cameFromMap.has(finishNode.id) || neighbours.size === 0) {
                 clearInterval(searchInterval)
 
-                // get path from start to finish
-                const path = getShortestPath(cameFromMap, startNode.id, finishNode.id, colMax * rowMax)
+                // only get and draw shortest path when we reached the finish
+                const reachedFinish = cameFromMap.has(finishNode.id)
+                if (reachedFinish) {
 
-                // draw path to grid
-                drawShortestPath(grid, path)
+                    // get path from start to finish
+                    const path = getShortestPath(cameFromMap, startNode.id, finishNode.id, colMax * rowMax)
+
+                    // draw path to grid
+                    drawShortestPath(grid, path)
+                }
             }
         }, 50)
     }
-
-    isVisualizing.set(false)
 }
