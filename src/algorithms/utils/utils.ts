@@ -1,6 +1,6 @@
 import type { IField, IFieldProp } from "../../interfaces/Field";
 import type { IPosition, IPositionWithId, IPositionWithIdAndWeight } from "../../interfaces/Position";
-import { currentGrid, fieldsSearched, isVisualizing, pathLength, showStats } from "../../store/store";
+import { currentGrid, fieldsSearched, isVisualizing, pathLength, pathStepCost, showStats } from "../../store/store";
 
 // function to return the indeces of a field using its prop name
 export function getFieldPositionByProp(grid: IField[][], property: IFieldProp): IPositionWithId | undefined {
@@ -41,6 +41,17 @@ export function getFieldPositionById(grid: IField[][], id: number) {
     return undefined
 }
 
+// function to return the field using its id
+export function getFieldById(grid: IField[][], id: number) {
+    for (var i = 0; i < grid.length; i++) {
+        var field = grid[i].find(field => field.id === id);
+        if (field) {
+            return field
+        }
+    }
+    return undefined
+}
+
 // get a random integer between a given min and max
 export function getRandomInt(min = 1, max: number) {
     return Math.floor(Math.random() * (max - min) + min)
@@ -70,6 +81,28 @@ export function getAllAdjacentFields(grid: IField[][], x: number, y: number) {
     // console.log("getAllAdjacentFields -> neighbours:", neighbours)
     return neighbours || []
 }
+
+// get all adjacent fields using a given x and y that are closest to a gicen finish field 
+// export function getAllClosestAdjacentFields(grid: IField[][], x: number, y: number, finishNode: IField) {
+//     let neighbours: IField[] = []
+//     let neighbourIndeces: number[][] = [[x, y - 1], [x, y + 1], [x - 1, y], [x + 1, y]]
+//     let distancesFromFinish = neighbourIndeces.map(([nX, nY]) => {
+//         return Math.abs(finishNode.x - nX || 0) + Math.abs(finishNode.y - nY || 0)
+//     })
+//     let lowestDistance = Math.min(...distancesFromFinish)
+//     let indecesOfLowestDistances = distancesFromFinish.flatMap((d, i) => d === lowestDistance ? [i] : [])
+//     console.log("closestIndeces:", distancesFromFinish, "lowestDistance:", lowestDistance, "indecesOfLowestDistances:", indecesOfLowestDistances)
+
+//     neighbourIndeces.forEach(([nX, nY], i) => {
+//         const distanceToFinish = Math.abs(finishNode.x - nX || 0) + Math.abs(finishNode.y - nY || 0)
+//         console.log("getAllClosetsAdjacentFields in for each -> nx:", nX, "nY:", nY, "distanceToFinish:", distanceToFinish, finishNode, "i", i)
+//         if (isMoveToFieldPossible(grid, { firstIndex: nY, secondIndex: nX }) && indecesOfLowestDistances.includes(i)) {
+//             neighbours.push(grid[nY][nX])
+//         }
+//     })
+//     // console.log("getAllAdjacentFields -> neighbours:", neighbours)
+//     return neighbours || []
+// }
 
 // function to get all adjacent empty field positions to a given position which will only be added if they don't already exist in `arrayToCheck`
 export function getAllAdjacentFieldPositions(grid: IField[][], firstIndex: number, secondIndex: number, arrayToCheck: IPositionWithId[] | IPositionWithIdAndWeight[]) {
@@ -143,7 +176,7 @@ export function isEveryFieldSearched(grid: IField[][]) {
 }
 
 // function to get the next field given a grid and two indeces
-export function getNextField(grid: IField[][], firstIndex: number, secondIndex: number, rowMax: number, colMax: number, lastDirection: IPosition): IField {
+export function getNextField(grid: IField[][], firstIndex: number, secondIndex: number, rowMax: number, colMax: number, lastDirection: IPosition) {
 
     // try to get to first row -> y index schould be 0 && top right element is empty
     if (firstIndex > 0 && grid && isFieldEmtpyAndExist(grid, 0, rowMax - 1) && isMoveInDirectionPossible(grid, { firstIndex, secondIndex }, { firstIndex: -1, secondIndex: 0 }, colMax, rowMax)) {
@@ -252,6 +285,18 @@ export function drawShortestPath(grid: IField[][], path: number[]) {
             currentGrid.set(grid)
         }, 50)
     }
+}
+
+export function calculatePathStepCost(grid: IField[][], path: number[]) {
+    let cost = 0;
+    path.forEach(e => {
+        const field = getFieldById(grid, e)
+        cost += field ? field.weight : 0
+    })
+    console.log("total cost:", cost)
+
+    // subtract 1 to ignore the cost for the start 
+    pathStepCost.set(cost - 1)
 }
 
 // function to calculate the last direction moved by using two given fields
