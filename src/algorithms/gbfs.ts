@@ -1,8 +1,8 @@
 import type { IField } from "../interfaces/Field";
 import type { IQueueItem } from "../interfaces/Queue";
-import { currentGrid, pathStepCost } from "../store/store";
+import { currentGrid, isVisualizing, pathStepCost } from "../store/store";
 import { priorityQueue } from "./utils/priorityQueue";
-import { getFieldByProp, getAllAdjacentFields, getStepCost, isEveryFieldSearched, getShortestPath, drawShortestPath } from "./utils/utils";
+import { getFieldByProp, getAllAdjacentFields, getStepCost, isEveryFieldSearched, getShortestPath, drawShortestPath, calculateLastDirection, calculatePathStepCost } from "./utils/utils";
 
 export function gbfs(grid: IField[][]) {
 
@@ -29,9 +29,10 @@ export function gbfs(grid: IField[][]) {
 
         const searchInterval = setInterval(() => {
 
-            // const lowestPrioElements: IQueueItem[] = [queue.dequeue()!]
-            const lowestPrioElements: IQueueItem[] = queue.dequeueAllLowest()
+            const lowestPrioElements: IQueueItem[] = [queue.dequeue()!]
+            // const lowestPrioElements: IQueueItem[] = queue.dequeueAllLowest()
             fieldsToCheck = lowestPrioElements.map(item => item.key)
+            console.log("lowestPrioElements ->", lowestPrioElements)
             neighbours.clear()
 
             if (fieldsToCheck.length > 0) {
@@ -46,12 +47,14 @@ export function gbfs(grid: IField[][]) {
 
                     // get all neighbours of the current field
                     getAllAdjacentFields(grid, field.x, field.y).forEach(neighbour => {
-                        // calculate distance from current field to finish to prioritize fields closer to the finish 
-                        const newDistance = Math.abs(finishNode.x - field.x) + Math.abs(finishNode.y - field.y)
+                        // calculate distance from current neighbur to finish to prioritize neighbours closer to the finish 
+                        const stepCost = (distances.get(field) || 0) + getStepCost(neighbour)
+                        const finishDistance = Math.abs(finishNode.x - neighbour.x) + Math.abs(finishNode.y - neighbour.y)
+                        const newDistance = stepCost + finishDistance
 
                         // add calculated distance to map to know how much the step to the neighbour costs
                         if (!distances.has(neighbour)) {
-                            distances.set(neighbour, newDistance)
+                            distances.set(neighbour, stepCost)
                         }
 
                         // add neighbour + calculated distance to queue 
@@ -64,6 +67,11 @@ export function gbfs(grid: IField[][]) {
 
                         // add unique neighbours to neighbours array
                         neighbours.add(neighbour)
+
+                        // mark each neighbour as searched
+                        if (!neighbour.start && !neighbour.finish) {
+                            neighbour.searched = true
+                        }
                     })
                 })
 
@@ -71,7 +79,7 @@ export function gbfs(grid: IField[][]) {
 
 
                 // check if we have arrived at the finish field
-                if (isEveryFieldSearched(grid) || Array.from(neighbours).some(e => e.finish === true) || cameFromMap.has(finishNode.id) || neighbours.size === 0) {
+                if (isEveryFieldSearched(grid) || Array.from(neighbours).some(e => e.finish === true) || cameFromMap.has(finishNode.id) || queue.isEmpty()) {
                     finalCost = lowestPrioElements[0].priority
 
                     clearInterval(searchInterval)
@@ -80,14 +88,18 @@ export function gbfs(grid: IField[][]) {
                     const reachedFinish = cameFromMap.has(finishNode.id)
                     if (reachedFinish) {
 
-                        // add one to the final cost to include the step to the finish
-                        pathStepCost.set(finalCost + 1)
 
                         // get path from start to finish
                         const path = getShortestPath(cameFromMap, startNode.id, finishNode.id, colMax * rowMax)
 
+                        // calculate total path step cost using the path
+                        calculatePathStepCost(grid, path)
+
                         // draw path to grid
                         drawShortestPath(grid, path)
+                    } else {
+                        isVisualizing.set(false)
+                        console.log("No path between start and finish was found")
                     }
                 }
             }
