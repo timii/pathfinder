@@ -50,7 +50,7 @@ export function gbfs(grid: IField[][]) {
                         // calculate distance from current neighbur to finish to prioritize neighbours closer to the finish 
                         const stepCost = (distances.get(field) || 0) + getStepCost(neighbour)
                         const finishDistance = Math.abs(finishNode.x - neighbour.x) + Math.abs(finishNode.y - neighbour.y)
-                        const newDistance = stepCost + finishDistance
+                        const newDistance = finishDistance
 
                         // add calculated distance to map to know how much the step to the neighbour costs
                         if (!distances.has(neighbour)) {
