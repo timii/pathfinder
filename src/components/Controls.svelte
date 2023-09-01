@@ -32,7 +32,9 @@
                             key !== "id" &&
                             key !== "weight" &&
                             key !== "start" &&
-                            key !== "finish"
+                            key !== "finish" &&
+                            key !== "x" &&
+                            key !== "y"
                         ) {
                             el[key as IFieldProp] = false;
                         }
@@ -52,7 +54,7 @@
     // initially select first algorithm
     // TODO: add check later if algorithm is already set in localStorage
     // TODO: reset to first element
-    let algoStartValue: { label: string; value: string } = mappedAlgos[2];
+    let algoStartValue: { label: string; value: string } = mappedAlgos[3];
     selectedAlgo.set(algoStartValue.label);
 
     function algoOnChange(event: CustomEvent) {
@@ -74,7 +76,7 @@
 
     // initially select wall as node type
     // TODO: add check later if node type is already set in localStorage
-    let nodeStartValue: { label: string; value: string } = nodeTypes[1];
+    let nodeStartValue: { label: string; value: string } = nodeTypes[0];
     selectedNodeType.set(nodeStartValue.label);
 
     function nodeOnChange(event: CustomEvent) {
