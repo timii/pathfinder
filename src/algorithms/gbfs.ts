@@ -1,8 +1,8 @@
 import type { IField } from "../interfaces/Field";
 import type { IQueueItem } from "../interfaces/Queue";
-import { currentGrid, isVisualizing, pathStepCost } from "../store/store";
+import { currentGrid, isVisualizing } from "../store/store";
 import { priorityQueue } from "./utils/priorityQueue";
-import { getFieldByProp, getAllAdjacentFields, getStepCost, isEveryFieldSearched, getShortestPath, drawShortestPath, calculateLastDirection, calculatePathStepCost } from "./utils/utils";
+import { getFieldByProp, getAllAdjacentFields, getStepCost, isEveryFieldSearched, getShortestPath, drawShortestPath, calculatePathStepCost } from "./utils/utils";
 
 export function gbfs(grid: IField[][]) {
 
@@ -10,7 +10,6 @@ export function gbfs(grid: IField[][]) {
     const colMax = grid.length
     const startNode = getFieldByProp(grid, "start")
     const finishNode = getFieldByProp(grid, "finish")
-    let finalCost = 0
 
     if (startNode && finishNode) {
 
@@ -30,9 +29,7 @@ export function gbfs(grid: IField[][]) {
         const searchInterval = setInterval(() => {
 
             const lowestPrioElements: IQueueItem[] = [queue.dequeue()!]
-            // const lowestPrioElements: IQueueItem[] = queue.dequeueAllLowest()
             fieldsToCheck = lowestPrioElements.map(item => item.key)
-            console.log("lowestPrioElements ->", lowestPrioElements)
             neighbours.clear()
 
             if (fieldsToCheck.length > 0) {
@@ -80,14 +77,12 @@ export function gbfs(grid: IField[][]) {
 
                 // check if we have arrived at the finish field
                 if (isEveryFieldSearched(grid) || Array.from(neighbours).some(e => e.finish === true) || cameFromMap.has(finishNode.id) || queue.isEmpty()) {
-                    finalCost = lowestPrioElements[0].priority
 
                     clearInterval(searchInterval)
 
                     // only get and draw shortest path when we reached the finish
                     const reachedFinish = cameFromMap.has(finishNode.id)
                     if (reachedFinish) {
-
 
                         // get path from start to finish
                         const path = getShortestPath(cameFromMap, startNode.id, finishNode.id, colMax * rowMax)

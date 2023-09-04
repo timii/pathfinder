@@ -1,5 +1,5 @@
 /**
- * naive implementation of a priority queue by using a list sorted priority
+ * naive implementation of a priority queue by using a list sorted by priority
  */
 
 import type { IField } from "../../interfaces/Field"
