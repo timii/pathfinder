@@ -1,8 +1,6 @@
 <script lang="ts">
-    import { algorithms } from "../algorithms/algorithms";
-    import type { IAlgorithm } from "../interfaces/Algorithm";
     import type { ISelectItem } from "../interfaces/Select";
-    import { isVisualizing, selectedAlgo } from "../store/store";
+    import { isVisualizing } from "../store/store";
 
     // external select component
     import Select from "svelte-select";
@@ -12,7 +10,7 @@
     export let startValue = {};
     export let onChangeCallback = (e: CustomEvent) =>
         console.log("onChangeCallback not defined");
-    export let width = "230px";
+    export let width = "255px";
 
     let value = startValue;
 </script>
