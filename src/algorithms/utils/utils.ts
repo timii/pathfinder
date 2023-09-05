@@ -1,8 +1,8 @@
 import type { IField, IFieldProp } from "../../interfaces/Field";
-import type { IPosition, IPositionWithId, IPositionWithIdAndWeight } from "../../interfaces/Position";
+import type { IPosition } from "../../interfaces/Position";
 import { currentGrid, fieldsSearched, isVisualizing, pathLength, pathStepCost, showStats } from "../../store/store";
 
-// function to return the field using its prop name
+// return the field using its prop name
 export function getFieldByProp(grid: IField[][], property: IFieldProp): IField | undefined {
     // console.log("getFieldPosition -> grid:", grid)
     for (var i = 0; i < grid.length; i++) {
@@ -14,7 +14,7 @@ export function getFieldByProp(grid: IField[][], property: IFieldProp): IField |
     return undefined
 }
 
-// function to return the field using its id
+// return the field using its id
 export function getFieldById(grid: IField[][], id: number) {
     for (var i = 0; i < grid.length; i++) {
         var field = grid[i].find(field => field.id === id);
@@ -56,7 +56,7 @@ export function getAllAdjacentFields(grid: IField[][], x: number, y: number) {
 }
 
 
-// function to check if a field at given indeces exists and if it's empty 
+// check if a field at given indeces exists and if it's empty 
 export function isFieldEmtpyAndExist(grid: IField[][], firstIndex: number, secondIndex: number, includeStartAndFinish?: boolean, includeOnlyStart?: boolean) {
     const field = grid[firstIndex][secondIndex]
     // console.log("isFieldEmtpyAndExist -> el:", field, firstIndex, secondIndex)
@@ -74,7 +74,7 @@ export function isFieldEmtpyAndExist(grid: IField[][], firstIndex: number, secon
     }
 }
 
-// function to check if every field is either searched or either a start, finish or wall field
+// check if every field is either searched or either a start, finish or wall field
 export function isEveryFieldSearched(grid: IField[][]) {
     const isGridFilled = grid.every((row, i) => row.every((_, j) => !isFieldEmtpyAndExist(grid, i, j)))
     if (isGridFilled) {
@@ -140,7 +140,7 @@ export function isMoveToFieldPossible(grid: IField[][], neighbourIndeces: IPosit
     return neighbourIndeces.firstIndex < colMax && neighbourIndeces.firstIndex >= 0 && neighbourIndeces.secondIndex < rowMax && neighbourIndeces.secondIndex >= 0 && isFieldEmtpyAndExist(grid, neighbourIndeces.firstIndex, neighbourIndeces.secondIndex, false, true)
 }
 
-// function to get the shortest path using a given map of ids
+// get the shortest path using a given map of ids
 export function getShortestPath(cameFromMap: Map<number, number>, startId: number, finishId: number, amountOfFields: number) {
     let current = finishId
     console.log("before while -> current:", current, "cameFromMap:", cameFromMap, "amountOfFields:", amountOfFields)
@@ -160,6 +160,7 @@ export function getShortestPath(cameFromMap: Map<number, number>, startId: numbe
     return path
 }
 
+// draw a given path in a given grid
 export function drawShortestPath(grid: IField[][], path: number[]) {
     // set fieldSearched for stats
     let fieldsSearchedAmount = 0
@@ -191,6 +192,7 @@ export function drawShortestPath(grid: IField[][], path: number[]) {
     }
 }
 
+// calculate the total step cost using the path and set it in the store
 export function calculatePathStepCost(grid: IField[][], path: number[]) {
     let cost = 0;
     path.forEach(e => {
@@ -203,9 +205,41 @@ export function calculatePathStepCost(grid: IField[][], path: number[]) {
     pathStepCost.set(cost - 1)
 }
 
-// function to calculate the last direction moved by using two given fields
+// calculate the last direction moved by using two given fields
 export function calculateLastDirection(lastField: IField, currentField: IField) {
     const beforeLastYDirection = lastField.y - currentField.y
     const beforeLastXDirection = lastField.x - currentField.x
     return { firstIndex: beforeLastYDirection, secondIndex: beforeLastXDirection }
+}
+
+// handle the case when no path was found by the algorithm
+export function noPathFound() {
+    isVisualizing.set(false)
+    console.log("No path between start and finish was found")
+}
+
+// clean up and handle path when algorithm is done searching
+export function finishedSearching(grid: IField[][], searchInterval: number, cameFromMap: Map<number, number>, start: IField, finish: IField, totalFieldsAmount: number) {
+    clearInterval(searchInterval)
+
+    // only get and draw shortest path when we reached the finish
+    const reachedFinish = cameFromMap.has(finish.id)
+    if (reachedFinish) {
+
+        // get path from start to finish
+        const path = getShortestPath(cameFromMap, start.id, finish.id, totalFieldsAmount)
+
+        // calculate total path step cost using the path
+        calculatePathStepCost(grid, path)
+
+        // draw path to grid
+        drawShortestPath(grid, path)
+    } else {
+        noPathFound()
+    }
+}
+
+// check if a given array contains the finish
+export function arrayContainsFinish(arr: IField[]) {
+    return arr.some(e => e.finish === true)
 }

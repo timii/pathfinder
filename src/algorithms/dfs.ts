@@ -1,7 +1,7 @@
 import type { IField } from "../interfaces/Field";
 import type { IPosition } from "../interfaces/Position";
 import { currentGrid, isVisualizing } from "../store/store";
-import { calculateLastDirection, drawShortestPath, getFieldByProp, getNextField, getShortestPath, isEveryFieldSearched } from "./utils/utils";
+import { calculateLastDirection, finishedSearching, getFieldByProp, getNextField, isEveryFieldSearched } from "./utils/utils";
 
 export function dfs(grid: IField[][]) {
     const rowMax = grid[0].length
@@ -17,7 +17,6 @@ export function dfs(grid: IField[][]) {
         let lastDircetion: IPosition = { firstIndex: -1, secondIndex: 0 }
         // keep track of all the fields to check next
         let fieldsToCheck: IField[] = [startNode]
-        let fieldsToCheckWithoutStartAndFinish: IField[] = []
         // keep track of unique neighbours
         let neighbours: Set<IField> = new Set([startNode])
         // keep track of the last three fields visited
@@ -70,18 +69,8 @@ export function dfs(grid: IField[][]) {
 
             // stop checking for fields if every field is not empty or a path to the finish field has been found
             if (isEveryFieldSearched(grid) || cameFromMap.has(finishNode.id) || neighbours.size === 0) {
-                clearInterval(searchInterval)
 
-                // only get and draw shortest path when we reached the finish
-                const reachedFinish = cameFromMap.has(finishNode.id)
-                if (reachedFinish) {
-
-                    // get path from start to finish
-                    const path = getShortestPath(cameFromMap, startNode.id, finishNode.id, colMax * rowMax)
-
-                    // draw path to grid
-                    drawShortestPath(grid, path)
-                }
+                finishedSearching(grid, searchInterval, cameFromMap, startNode, finishNode, colMax * rowMax)
             }
         }, 50)
     }

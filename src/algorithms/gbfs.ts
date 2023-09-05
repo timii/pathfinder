@@ -1,8 +1,8 @@
 import type { IField } from "../interfaces/Field";
 import type { IQueueItem } from "../interfaces/Queue";
-import { currentGrid, isVisualizing } from "../store/store";
+import { currentGrid } from "../store/store";
 import { priorityQueue } from "./utils/priorityQueue";
-import { getFieldByProp, getAllAdjacentFields, getStepCost, isEveryFieldSearched, getShortestPath, drawShortestPath, calculatePathStepCost } from "./utils/utils";
+import { getFieldByProp, getAllAdjacentFields, getStepCost, isEveryFieldSearched, finishedSearching, arrayContainsFinish } from "./utils/utils";
 
 export function gbfs(grid: IField[][]) {
 
@@ -76,26 +76,9 @@ export function gbfs(grid: IField[][]) {
 
 
                 // check if we have arrived at the finish field
-                if (isEveryFieldSearched(grid) || Array.from(neighbours).some(e => e.finish === true) || cameFromMap.has(finishNode.id) || queue.isEmpty()) {
+                if (isEveryFieldSearched(grid) || arrayContainsFinish(Array.from(neighbours)) || cameFromMap.has(finishNode.id) || queue.isEmpty()) {
 
-                    clearInterval(searchInterval)
-
-                    // only get and draw shortest path when we reached the finish
-                    const reachedFinish = cameFromMap.has(finishNode.id)
-                    if (reachedFinish) {
-
-                        // get path from start to finish
-                        const path = getShortestPath(cameFromMap, startNode.id, finishNode.id, colMax * rowMax)
-
-                        // calculate total path step cost using the path
-                        calculatePathStepCost(grid, path)
-
-                        // draw path to grid
-                        drawShortestPath(grid, path)
-                    } else {
-                        isVisualizing.set(false)
-                        console.log("No path between start and finish was found")
-                    }
+                    finishedSearching(grid, searchInterval, cameFromMap, startNode, finishNode, colMax * rowMax)
                 }
             }
         }, 50)

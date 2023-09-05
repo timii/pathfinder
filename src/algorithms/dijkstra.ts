@@ -1,8 +1,8 @@
 import type { IField } from "../interfaces/Field";
 import type { IQueueItem } from "../interfaces/Queue";
-import { currentGrid, pathStepCost } from "../store/store";
+import { currentGrid } from "../store/store";
 import { priorityQueue } from "./utils/priorityQueue";
-import { getFieldByProp, getAllAdjacentFields, getStepCost, drawShortestPath, getShortestPath, isEveryFieldSearched } from "./utils/utils";
+import { getFieldByProp, getAllAdjacentFields, getStepCost, isEveryFieldSearched, finishedSearching, arrayContainsFinish } from "./utils/utils";
 
 export function dijkstra(grid: IField[][]) {
 
@@ -70,24 +70,9 @@ export function dijkstra(grid: IField[][]) {
 
 
                 // check if we have arrived at the finish field
-                if (isEveryFieldSearched(grid) || Array.from(neighbours).some(e => e.finish === true) || cameFromMap.has(finishNode.id) || neighbours.size === 0) {
-                    finalCost = lowestPrioElements[0].priority
+                if (isEveryFieldSearched(grid) || arrayContainsFinish(Array.from(neighbours)) || cameFromMap.has(finishNode.id) || neighbours.size === 0) {
 
-                    clearInterval(searchInterval)
-
-                    // only get and draw shortest path when we reached the finish
-                    const reachedFinish = cameFromMap.has(finishNode.id)
-                    if (reachedFinish) {
-
-                        // add one to the final cost to include the step to the finish
-                        pathStepCost.set(finalCost + 1)
-
-                        // get path from start to finish
-                        const path = getShortestPath(cameFromMap, startNode.id, finishNode.id, colMax * rowMax)
-
-                        // draw path to grid
-                        drawShortestPath(grid, path)
-                    }
+                    finishedSearching(grid, searchInterval, cameFromMap, startNode, finishNode, colMax * rowMax)
                 }
             }
         }, 50)
