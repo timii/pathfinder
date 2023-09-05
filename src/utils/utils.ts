@@ -1,6 +1,6 @@
-import type { IField, IFieldProp } from "../../interfaces/Field";
-import type { IPosition } from "../../interfaces/Position";
-import { currentGrid, fieldsSearched, isVisualizing, pathLength, pathStepCost, showStats } from "../../store/store";
+import type { IField, IFieldProp } from "../interfaces/Field";
+import type { IPosition } from "../interfaces/Position";
+import { currentGrid, fieldsSearched, isVisualizing, pathLength, pathStepCost, showStats } from "../store/store";
 
 // return the field using its prop name
 export function getFieldByProp(grid: IField[][], property: IFieldProp): IField | undefined {

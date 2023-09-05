@@ -1,7 +1,8 @@
 import type { IField } from "../interfaces/Field";
 import type { IPosition } from "../interfaces/Position";
 import { currentGrid, isVisualizing } from "../store/store";
-import { calculateLastDirection, finishedSearching, getFieldByProp, getNextField, isEveryFieldSearched } from "./utils/utils";
+import { CONSTS } from "../utils/consts";
+import { calculateLastDirection, finishedSearching, getFieldByProp, getNextField, isEveryFieldSearched } from "../utils/utils";
 
 export function dfs(grid: IField[][]) {
     const rowMax = grid[0].length
@@ -72,6 +73,6 @@ export function dfs(grid: IField[][]) {
 
                 finishedSearching(grid, searchInterval, cameFromMap, startNode, finishNode, colMax * rowMax)
             }
-        }, 50)
+        }, CONSTS.searchIntervallSpeed)
     }
 }

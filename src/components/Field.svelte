@@ -102,7 +102,7 @@
         }
     }
 
-    // function to write the grid with the changed field into the store
+    // write the grid with the changed field into the store
     function setGrid(newFieldData: IField) {
         console.log("setGrid -> x:", fieldData.x, fieldData.y, newFieldData);
         const grid: IField[][] = $currentGrid;
@@ -217,7 +217,7 @@
         // setStoreValue();
     }
 
-    // function to handle dragging mouse over multiple fields
+    // handle dragging mouse over multiple fields
     function handleMouseEnter(event: MouseEvent) {
         if (!fieldData.start && !fieldData.finish) {
             // if dragging over fields with left mouse -> color field according to selected node type
@@ -232,7 +232,7 @@
         }
     }
 
-    // function to avoid opening context menu when right clicking on node
+    // avoid opening context menu when right clicking on node
     function handleContextmenu(event: MouseEvent) {
         console.log("handleContextmenu -> event:", event);
         event.preventDefault();

@@ -2,8 +2,8 @@
  * naive implementation of a priority queue by using a list sorted by priority
  */
 
-import type { IField } from "../../interfaces/Field"
-import type { IQueueItem } from "../../interfaces/Queue"
+import type { IField } from "../interfaces/Field"
+import type { IQueueItem } from "../interfaces/Queue"
 
 export function priorityQueue() {
     const collection: IQueueItem[] = []

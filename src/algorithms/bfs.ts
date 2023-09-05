@@ -1,6 +1,7 @@
 import type { IField } from "../interfaces/Field";
 import { currentGrid } from "../store/store";
-import { arrayContainsFinish, finishedSearching, getAllAdjacentFields, getFieldByProp, isEveryFieldSearched } from "./utils/utils";
+import { CONSTS } from "../utils/consts";
+import { arrayContainsFinish, finishedSearching, getAllAdjacentFields, getFieldByProp, isEveryFieldSearched } from "../utils/utils";
 
 // function for the breadth first search algorithm
 export function bfs(grid: IField[][]) {
@@ -55,6 +56,6 @@ export function bfs(grid: IField[][]) {
                     finishedSearching(grid, searchInterval, cameFromMap, startNode, finishNode, colMax * rowMax)
                 }
             }
-        }, 50)
+        }, CONSTS.searchIntervallSpeed)
     }
 }

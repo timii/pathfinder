@@ -1,8 +1,9 @@
 import type { IField } from "../interfaces/Field";
 import type { IQueueItem } from "../interfaces/Queue";
 import { currentGrid } from "../store/store";
-import { priorityQueue } from "./utils/priorityQueue";
-import { getFieldByProp, getAllAdjacentFields, getStepCost, isEveryFieldSearched, finishedSearching, arrayContainsFinish } from "./utils/utils";
+import { CONSTS } from "../utils/consts";
+import { priorityQueue } from "../utils/priorityQueue";
+import { getFieldByProp, getAllAdjacentFields, getStepCost, isEveryFieldSearched, finishedSearching, arrayContainsFinish } from "../utils/utils";
 
 export function gbfs(grid: IField[][]) {
 
@@ -81,6 +82,6 @@ export function gbfs(grid: IField[][]) {
                     finishedSearching(grid, searchInterval, cameFromMap, startNode, finishNode, colMax * rowMax)
                 }
             }
-        }, 50)
+        }, CONSTS.searchIntervallSpeed)
     }
 }
