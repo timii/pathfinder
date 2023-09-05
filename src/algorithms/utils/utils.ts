@@ -2,20 +2,6 @@ import type { IField, IFieldProp } from "../../interfaces/Field";
 import type { IPosition, IPositionWithId, IPositionWithIdAndWeight } from "../../interfaces/Position";
 import { currentGrid, fieldsSearched, isVisualizing, pathLength, pathStepCost, showStats } from "../../store/store";
 
-// function to return the indeces of a field using its prop name
-export function getFieldPositionByProp(grid: IField[][], property: IFieldProp): IPositionWithId | undefined {
-    // console.log("getFieldPosition -> grid:", grid)
-    for (var i = 0; i < grid.length; i++) {
-        var index = grid[i].findIndex(field => field[property] === true);
-        if (index > -1) {
-            let pos: IPositionWithId = { firstIndex: i, secondIndex: index, id: grid[i][index].id };
-            // console.log("getFieldPosition -> pos in for loop:", pos)
-            return pos
-        }
-    }
-    return undefined
-}
-
 // function to return the field using its prop name
 export function getFieldByProp(grid: IField[][], property: IFieldProp): IField | undefined {
     // console.log("getFieldPosition -> grid:", grid)
@@ -23,19 +9,6 @@ export function getFieldByProp(grid: IField[][], property: IFieldProp): IField |
         var field = grid[i].find(field => field[property] === true);
         if (field) {
             return field
-        }
-    }
-    return undefined
-}
-
-// function to return the indeces of a field using its id
-export function getFieldPositionById(grid: IField[][], id: number) {
-    for (var i = 0; i < grid.length; i++) {
-        var index = grid[i].findIndex(field => field.id === id);
-        if (index > -1) {
-            let pos: IPositionWithId = { firstIndex: i, secondIndex: index, id };
-            // console.log("getFieldPosition -> pos in for loop:", pos)
-            return pos
         }
     }
     return undefined
@@ -70,83 +43,18 @@ export function isFinish(field: IField) {
 // get all adjacent fields using a given x and y 
 export function getAllAdjacentFields(grid: IField[][], x: number, y: number) {
     let neighbours: IField[] = []
+
+    // create array of indeces for all directions
     let neighbourIndeces: number[][] = [[x, y - 1], [x, y + 1], [x - 1, y], [x + 1, y]]
 
     neighbourIndeces.forEach(([nX, nY]) => {
-        // console.log("getAllAdjacentFields in for each -> nx:", nX, "nY:", nY)
         if (isMoveToFieldPossible(grid, { firstIndex: nY, secondIndex: nX })) {
             neighbours.push(grid[nY][nX])
         }
     })
-    // console.log("getAllAdjacentFields -> neighbours:", neighbours)
     return neighbours || []
 }
 
-// get all adjacent fields using a given x and y that are closest to a gicen finish field 
-// export function getAllClosestAdjacentFields(grid: IField[][], x: number, y: number, finishNode: IField) {
-//     let neighbours: IField[] = []
-//     let neighbourIndeces: number[][] = [[x, y - 1], [x, y + 1], [x - 1, y], [x + 1, y]]
-//     let distancesFromFinish = neighbourIndeces.map(([nX, nY]) => {
-//         return Math.abs(finishNode.x - nX || 0) + Math.abs(finishNode.y - nY || 0)
-//     })
-//     let lowestDistance = Math.min(...distancesFromFinish)
-//     let indecesOfLowestDistances = distancesFromFinish.flatMap((d, i) => d === lowestDistance ? [i] : [])
-//     console.log("closestIndeces:", distancesFromFinish, "lowestDistance:", lowestDistance, "indecesOfLowestDistances:", indecesOfLowestDistances)
-
-//     neighbourIndeces.forEach(([nX, nY], i) => {
-//         const distanceToFinish = Math.abs(finishNode.x - nX || 0) + Math.abs(finishNode.y - nY || 0)
-//         console.log("getAllClosetsAdjacentFields in for each -> nx:", nX, "nY:", nY, "distanceToFinish:", distanceToFinish, finishNode, "i", i)
-//         if (isMoveToFieldPossible(grid, { firstIndex: nY, secondIndex: nX }) && indecesOfLowestDistances.includes(i)) {
-//             neighbours.push(grid[nY][nX])
-//         }
-//     })
-//     // console.log("getAllAdjacentFields -> neighbours:", neighbours)
-//     return neighbours || []
-// }
-
-// function to get all adjacent empty field positions to a given position which will only be added if they don't already exist in `arrayToCheck`
-export function getAllAdjacentFieldPositions(grid: IField[][], firstIndex: number, secondIndex: number, arrayToCheck: IPositionWithId[] | IPositionWithIdAndWeight[]) {
-    const neighbours: IPositionWithId[] = []
-    const rowMax = grid[0].length
-    const colMax = grid.length
-    // console.log("getAllAdjacentFieldPositions -> grid:", grid, firstIndex, secondIndex, "rowMax:", rowMax, "colMax:", colMax)
-
-    // check field above
-    const fieldAbove = [firstIndex - 1, secondIndex]
-    if (firstIndex - 1 >= 0 && isFieldEmtpyAndExist(grid, fieldAbove[0], fieldAbove[1]) && !doesFieldExistInArray(arrayToCheck, grid[fieldAbove[0]][fieldAbove[1]].id)) {
-        const elementAbove = grid[fieldAbove[0]][fieldAbove[1]]
-        neighbours.push({ firstIndex: fieldAbove[0], secondIndex: fieldAbove[1], id: elementAbove.id })
-    }
-
-    // check field below
-    const fieldBelow = [firstIndex + 1, secondIndex]
-    if (firstIndex + 1 < colMax && isFieldEmtpyAndExist(grid, fieldBelow[0], fieldBelow[1]) && !doesFieldExistInArray(arrayToCheck, grid[fieldBelow[0]][fieldBelow[1]].id)) {
-        const elementBelow = grid[fieldBelow[0]][fieldBelow[1]]
-        neighbours.push({ firstIndex: fieldBelow[0], secondIndex: fieldBelow[1], id: elementBelow.id })
-    }
-
-    // check field to the left
-    const fieldToTheLeft = [firstIndex, secondIndex - 1]
-    if (secondIndex - 1 >= 0 && isFieldEmtpyAndExist(grid, fieldToTheLeft[0], fieldToTheLeft[1]) && !doesFieldExistInArray(arrayToCheck, grid[fieldToTheLeft[0]][fieldToTheLeft[1]].id)) {
-        const elementToTheLeft = grid[fieldToTheLeft[0]][fieldToTheLeft[1]]
-        neighbours.push({ firstIndex: fieldToTheLeft[0], secondIndex: fieldToTheLeft[1], id: elementToTheLeft.id })
-    }
-
-    // check field to the right
-    const fieldToTheRight = [firstIndex, secondIndex + 1]
-    if (secondIndex + 1 < rowMax && isFieldEmtpyAndExist(grid, fieldToTheRight[0], fieldToTheRight[1]) && !doesFieldExistInArray(arrayToCheck, grid[fieldToTheRight[0]][fieldToTheRight[1]].id)) {
-        const elementToTheRight = grid[fieldToTheRight[0]][fieldToTheRight[1]]
-        neighbours.push({ firstIndex: fieldToTheRight[0], secondIndex: fieldToTheRight[1], id: elementToTheRight.id })
-    }
-
-    console.log("getAllAdjacentFieldPositions -> neighbours:", neighbours)
-    return neighbours
-}
-
-// function to check if a field, using its id, already exists in a given array
-export function doesFieldExistInArray(arrayToCheck: IPositionWithId[] | IPositionWithIdAndWeight[], id: number): boolean {
-    return arrayToCheck.findIndex(el => el.id === id) !== -1
-}
 
 // function to check if a field at given indeces exists and if it's empty 
 export function isFieldEmtpyAndExist(grid: IField[][], firstIndex: number, secondIndex: number, includeStartAndFinish?: boolean, includeOnlyStart?: boolean) {
@@ -175,7 +83,7 @@ export function isEveryFieldSearched(grid: IField[][]) {
     return isGridFilled
 }
 
-// function to get the next field given a grid and two indeces
+// function for just depth first search algorithm to get the next field given a grid and two indeces
 export function getNextField(grid: IField[][], firstIndex: number, secondIndex: number, rowMax: number, colMax: number, lastDirection: IPosition) {
 
     // try to get to first row -> y index schould be 0 && top right element is empty
@@ -224,11 +132,10 @@ export function isMoveInDirectionPossible(grid: IField[][], curPosition: IPositi
     return newFirstIndex < colMax && newFirstIndex >= 0 && newSecondIndex < rowMax && newSecondIndex >= 0 && isFieldEmtpyAndExist(grid, newFirstIndex, newSecondIndex, false, true)
 }
 
+// check if moving to a given neighbour is possible
 export function isMoveToFieldPossible(grid: IField[][], neighbourIndeces: IPosition) {
     const rowMax = grid[0].length
     const colMax = grid.length
-
-    // console.log("isMoveToFieldPossible -> neighbourIndeces:", neighbourIndeces)
 
     return neighbourIndeces.firstIndex < colMax && neighbourIndeces.firstIndex >= 0 && neighbourIndeces.secondIndex < rowMax && neighbourIndeces.secondIndex >= 0 && isFieldEmtpyAndExist(grid, neighbourIndeces.firstIndex, neighbourIndeces.secondIndex, false, true)
 }
@@ -265,12 +172,9 @@ export function drawShortestPath(grid: IField[][], path: number[]) {
         const pathInterval = setInterval(() => {
             if (path.length > 0) {
                 const nextPathElement = path.shift()
-                const nextFieldIndeces = getFieldPositionById(grid, nextPathElement!)
-                if (nextFieldIndeces) {
-                    const nextField = grid[nextFieldIndeces.firstIndex][nextFieldIndeces.secondIndex]
-                    if (!nextField.start && !nextField.finish) {
-                        nextField.path = true
-                    }
+                const nextField = getFieldById(grid, nextPathElement!)
+                if (nextField && !nextField.start && !nextField.finish) {
+                    nextField.path = true
                 }
                 if (path.length === 0) {
                     isVisualizing.set(false)
@@ -304,31 +208,4 @@ export function calculateLastDirection(lastField: IField, currentField: IField) 
     const beforeLastYDirection = lastField.y - currentField.y
     const beforeLastXDirection = lastField.x - currentField.x
     return { firstIndex: beforeLastYDirection, secondIndex: beforeLastXDirection }
-}
-
-// function to get the lowest step cost from a given array of fields
-export function getLowestCost(fields: IPositionWithIdAndWeight[]) {
-    console.log("getLowestCost -> fields:", fields)
-    if (fields.length > 0) {
-        const minField = fields.reduce((a, b) => a.weight < b.weight ? a : b)
-        return minField.weight || 1
-    } else {
-        return 0
-    }
-}
-
-// function to divide a given array into two seperate ones using a given filter
-export function partitionArray(array: IPositionWithIdAndWeight[], filter: (el: IPositionWithIdAndWeight) => boolean) {
-    const pass: typeof array = []
-    const fail: typeof array = []
-
-    array.forEach(el => {
-        if (filter(el))
-            pass.push(el);
-        else
-            fail.push(el);
-    })
-
-    console.log("partitionArray -> pass:", pass, "fail:", fail)
-    return [pass, fail];
 }

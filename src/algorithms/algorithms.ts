@@ -23,9 +23,6 @@ export const algorithms: IAlgorithm[] = [
         functionCallback: aStar,
     },
     {
-        name: "Uniform Cost Search",
-    },
-    {
         name: "Greedy Best First Search",
         functionCallback: gbfs
     }
