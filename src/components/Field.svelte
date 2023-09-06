@@ -20,16 +20,17 @@
     // console.log("Field:", fieldData);
 
     const nodeColorMap = new Map<string, string>([
-        ["wall", "#31C6D4"],
-        ["grass", "gray"],
-        ["start", "#54B435"],
-        ["finish", "#FF1E1E"],
+        ["wall", "wall.png"],
+        ["grass", "grass.png"],
+        ["start", "start.png"],
+        ["finish", "goal.png"],
         ["searched", "#FCE700"],
         ["path", "#FF6D28"],
         ["default", "transparent"],
     ]);
 
     let color = "";
+    let bgImage = "";
     let nodeType = "";
     let nodeSet =
         fieldData.start ||
@@ -92,7 +93,16 @@
 
         if (fieldProps) {
             if (fieldProps.length === 1) {
-                color = nodeColorMap.get(fieldProps[0] as IFieldProp)!;
+                const colorValue = nodeColorMap.get(
+                    fieldProps[0] as IFieldProp
+                )!;
+                if (colorValue?.endsWith(".png")) {
+                    color = "transparent";
+                    bgImage = colorValue;
+                } else {
+                    color = colorValue;
+                    bgImage = "";
+                }
             }
 
             // if mutiple props are true -> prioritize path to show the path after searching
@@ -276,7 +286,7 @@
     on:contextmenu={handleContextmenu}
     on:mouseenter={handleMouseEnter}
     class="field hover:cursor-pointer w-8 h-8 border-solid border-zinc-200 border"
-    style="background-color: {color}; cursor: {startOrFinishNode
+    style="background-color: {color}; background-image: url({bgImage}); cursor: {startOrFinishNode
         ? 'default'
         : 'pointer'}; border-color: {fieldData.searched ? 'yellow' : 'white'}"
 />
