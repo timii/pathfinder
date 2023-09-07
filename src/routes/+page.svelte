@@ -13,8 +13,6 @@
 
     <Grid />
 
-    <p>Current node type: {$selectedAlgo}</p>
-
     <Controls />
 
     <Stats />
