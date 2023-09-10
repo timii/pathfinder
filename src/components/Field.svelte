@@ -15,9 +15,6 @@
         x: 0,
         y: 0,
     };
-    // export let firstIndex: number;
-    // export let secondIndex: number;
-    // console.log("Field:", fieldData);
 
     const nodeColorMap = new Map<string, string>([
         ["wall", "wall.png"],
@@ -28,6 +25,9 @@
         ["path", "#FF6D28"],
         ["default", "transparent"],
     ]);
+
+    // map of all weighted nodes and their corresponding weights
+    const weightedNodesMap = new Map<string, number>([["grass", 5]]);
 
     let color = "";
     let bgImage = "";
@@ -96,6 +96,7 @@
                 const colorValue = nodeColorMap.get(
                     fieldProps[0] as IFieldProp
                 )!;
+
                 if (colorValue?.endsWith(".png")) {
                     color = "transparent";
                     bgImage = colorValue;
@@ -105,16 +106,22 @@
                 }
             }
 
-            // if mutiple props are true -> prioritize path to show the path after searching
-            if (fieldProps.length > 1 && fieldProps.includes("path")) {
+            // if mutiple props are true -> prioritize path color to show the path after searching
+            if (
+                fieldProps.length > 1 &&
+                fieldProps.includes("path") &&
+                !(fieldData.grass || fieldData.wall)
+            ) {
                 color = nodeColorMap.get("path")!;
+                // color = nodeColorMap.get("path")!;
+                // bgImage = "";
             }
         }
     }
 
     // write the grid with the changed field into the store
     function setGrid(newFieldData: IField) {
-        console.log("setGrid -> x:", fieldData.x, fieldData.y, newFieldData);
+        // console.log("setGrid -> x:", fieldData.x, fieldData.y, newFieldData);
         const grid: IField[][] = $currentGrid;
         const gridField = grid[fieldData.y][fieldData.x];
 
@@ -131,8 +138,8 @@
         fieldData[fieldProp] = value;
 
         // change the weight of the field for given node types
-        if (fieldProp === "grass") {
-            fieldData.weight = 5;
+        if (weightedNodesMap.has(fieldProp)) {
+            fieldData.weight = weightedNodesMap.get(fieldProp)!;
         }
 
         setGrid(fieldData);
@@ -150,6 +157,9 @@
                 fieldData[key as IFieldProp] = false;
             }
         });
+
+        // reset the background image
+        bgImage = "";
     }
 
     // check if field has any color currently
@@ -160,7 +170,7 @@
     }
 
     function handleClick(event: MouseEvent) {
-        console.log("handleClick called -> event:", event);
+        // console.log("handleClick called -> event:", event);
         // only handle click if node is not a start or finish node
         if (!fieldData.start && !fieldData.finish) {
             // if left mouse button clicked
@@ -285,10 +295,18 @@
     on:mousedown={handleClick}
     on:contextmenu={handleContextmenu}
     on:mouseenter={handleMouseEnter}
-    class="field hover:cursor-pointer w-8 h-8 border-solid border-zinc-200 border"
-    style="background-color: {color}; background-image: url({bgImage}); cursor: {startOrFinishNode
+    class="field hover:cursor-pointer w-8 h-8 border-solid border-zinc-300 border"
+    style="background-color: {color}; background-image: url({bgImage}) {fieldData.path
+        ? ',radial-gradient(circle, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 70%, rgba(255,109,40,1) 100%)'
+        : fieldData.searched
+        ? ',radial-gradient(circle, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 70%, rgba(255,255,0,1) 100%)'
+        : ''}; cursor: {startOrFinishNode
         ? 'default'
-        : 'pointer'}; border-color: {fieldData.searched ? 'yellow' : 'white'}"
+        : 'pointer'}; border-color: {fieldData.path
+        ? nodeColorMap.get('path')
+        : fieldData.searched
+        ? 'yellow'
+        : ''};"
 />
 
 <style lang="postcss">
