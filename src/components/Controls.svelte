@@ -28,14 +28,7 @@
             grid.forEach((row: IField[]) => {
                 row.forEach((el: IField) => {
                     Object.keys(el).forEach((key) => {
-                        if (
-                            key !== "id" &&
-                            key !== "weight" &&
-                            key !== "start" &&
-                            key !== "finish" &&
-                            key !== "x" &&
-                            key !== "y"
-                        ) {
+                        if (key === "searched" || key === "path") {
                             el[key as IFieldProp] = false;
                         }
                     });
@@ -54,7 +47,7 @@
     // initially select first algorithm
     // TODO: add check later if algorithm is already set in localStorage
     // TODO: reset to first element
-    let algoStartValue: { label: string; value: string } = mappedAlgos[3];
+    let algoStartValue: { label: string; value: string } = mappedAlgos[0];
     selectedAlgo.set(algoStartValue.label);
 
     function algoOnChange(event: CustomEvent) {
