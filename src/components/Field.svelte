@@ -31,13 +31,15 @@
 
     let color = "";
     let bgImage = "";
-    let nodeType = "";
-    let nodeSet =
-        fieldData.start ||
-        fieldData.finish ||
-        fieldData.searched ||
-        fieldData.wall;
     let startOrFinishNode = fieldData.start || fieldData.finish;
+    let cursorType = startOrFinishNode ? "default" : "pointer";
+
+    // let nodeType = "";
+    // let nodeSet =
+    //     fieldData.start ||
+    //     fieldData.finish ||
+    //     fieldData.searched ||
+    //     fieldData.wall;
     // TODO: set dynamic maxRow and maxCol and remove hardcoded 9
     // let borderField = {
     //     topBorder: firstIndex === 0,
@@ -71,6 +73,33 @@
     //     secondIndex,
     //     "\n----------------------------------------------------------------"
     // );
+
+    // get background gradient styles using the truthy field data properties and re-run this function every time one of the values changes
+    $: getBackgroundGradient = () => {
+        if (fieldData.path) {
+            return ",radial-gradient(circle, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 70%, rgba(255,109,40,1) 100%)";
+        }
+        if (fieldData.searched) {
+            return ",radial-gradient(circle, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 70%, rgba(255,255,0,1) 100%)";
+        }
+
+        // if neither path nor searched is true set no background gradient
+        return "";
+    };
+
+    // get border color styles
+    $: getBorderColor = () => {
+        if (fieldData.path) {
+            return nodeColorMap.get("path");
+        }
+
+        if (fieldData.searched) {
+            return nodeColorMap.get("searched");
+        }
+
+        // if neither path nor searched is true set no new border-color
+        return "";
+    };
 
     afterUpdate(() => {
         // console.log("afterUpdate called -> fieldData:", fieldData);
@@ -296,17 +325,7 @@
     on:contextmenu={handleContextmenu}
     on:mouseenter={handleMouseEnter}
     class="field hover:cursor-pointer w-8 h-8 border-solid border-zinc-300 border"
-    style="background-color: {color}; background-image: url({bgImage}) {fieldData.path
-        ? ',radial-gradient(circle, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 70%, rgba(255,109,40,1) 100%)'
-        : fieldData.searched
-        ? ',radial-gradient(circle, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 70%, rgba(255,255,0,1) 100%)'
-        : ''}; cursor: {startOrFinishNode
-        ? 'default'
-        : 'pointer'}; border-color: {fieldData.path
-        ? nodeColorMap.get('path')
-        : fieldData.searched
-        ? 'yellow'
-        : ''};"
+    style="background-color: {color}; background-image: url({bgImage}) {getBackgroundGradient()}; cursor: {cursorType}; border-color: {getBorderColor()};"
 />
 
 <style lang="postcss">
