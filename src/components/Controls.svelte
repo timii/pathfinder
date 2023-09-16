@@ -65,11 +65,14 @@
     const nodeTypes: ISelectItem[] = [
         { label: "Wall", value: "Wall" },
         { label: "Grass", value: "Grass" },
+        { label: "Sand", value: "Sand" },
+        { label: "Snow", value: "Snow" },
+        { label: "Water", value: "Water" },
     ];
 
     // initially select wall as node type
     // TODO: add check later if node type is already set in localStorage
-    let nodeStartValue: { label: string; value: string } = nodeTypes[0];
+    let nodeStartValue = nodeTypes[0];
     selectedNodeType.set(nodeStartValue.label);
 
     function nodeOnChange(event: CustomEvent) {

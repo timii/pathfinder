@@ -11,6 +11,9 @@
         path: false,
         wall: false,
         grass: false,
+        snow: false,
+        sand: false,
+        water: false,
         searched: false,
         x: 0,
         y: 0,
@@ -19,6 +22,9 @@
     const nodeColorMap = new Map<string, string>([
         ["wall", "wall.png"],
         ["grass", "grass.png"],
+        ["snow", "snow.png"],
+        ["sand", "sand.png"],
+        ["water", "water.png"],
         ["start", "start.png"],
         ["finish", "goal.png"],
         ["searched", "#FCE700"],
@@ -27,7 +33,12 @@
     ]);
 
     // map of all weighted nodes and their corresponding weights
-    const weightedNodesMap = new Map<string, number>([["grass", 5]]);
+    const weightedNodesMap = new Map<string, number>([
+        ["grass", 5],
+        ["sand", 10],
+        ["snow", 25],
+        ["water", 50],
+    ]);
 
     let color = "";
     let bgImage = "";
@@ -139,7 +150,13 @@
             if (
                 fieldProps.length > 1 &&
                 fieldProps.includes("path") &&
-                !(fieldData.grass || fieldData.wall)
+                !(
+                    fieldData.grass ||
+                    fieldData.wall ||
+                    fieldData.snow ||
+                    fieldData.sand ||
+                    fieldData.water
+                )
             ) {
                 color = nodeColorMap.get("path")!;
                 // color = nodeColorMap.get("path")!;
