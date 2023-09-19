@@ -86,7 +86,7 @@
     }
 </script>
 
-<div class="flex flex-row gap-2 w-full justify-center">
+<div class="flex flex-wrap flex-row gap-2 w-full justify-center">
     <Select
         disabled={$isVisualizing}
         items={mappedAlgos}
