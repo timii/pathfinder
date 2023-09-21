@@ -13,6 +13,8 @@
     import Select from "./Select.svelte";
 
     function startVisualize() {
+        clearGrid();
+
         const currentAlgo = algorithms.find((el) => el.name === $selectedAlgo);
         console.log("startVisualize -> selectedAlgo:", currentAlgo);
         if (currentAlgo && currentAlgo.functionCallback) {

@@ -14,7 +14,7 @@
 
     <Grid />
 
-    <Stats />
+    <!-- <Stats /> -->
 </main>
 
 <style lang="postcss">

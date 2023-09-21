@@ -341,7 +341,7 @@
     on:mousedown={handleClick}
     on:contextmenu={handleContextmenu}
     on:mouseenter={handleMouseEnter}
-    class="field hover:cursor-pointer w-7 h-7 sm:w-8 sm:h-8 bg-contain bg-center border-solid border-zinc-300 border"
+    class="field hover:cursor-pointer w-6 h-6 min-[400px]:w-7 min-[400px]:h-7 sm:w-8 sm:h-8 bg-contain bg-center border-solid border-zinc-300 border"
     style="background-color: {color}; background-image: url({bgImage}) {getBackgroundGradient()}; cursor: {cursorType}; border-color: {getBorderColor()};"
 />
 
