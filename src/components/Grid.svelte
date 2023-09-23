@@ -3,6 +3,8 @@
     import type { IField } from "../interfaces/Field";
     import { currentGrid } from "../store/store";
     import Field from "./Field.svelte";
+    import Stats from "./Stats.svelte";
+    import { CONSTS } from "../utils/consts";
 
     const fieldObject: IField = {
         id: 0,
@@ -93,10 +95,16 @@
     // fields[7][3] = { ...fields[7][3], grass: true, weight: 5 };
 
     currentGrid.set(fields);
+
+    // keep track of the current height to move the stats window according to the screen height
+    let curHeight = 0;
 </script>
 
+<!-- bind curHeight to the innerHeight of the window -->
+<svelte:window bind:innerHeight={curHeight} />
+
 <div
-    class="bg-zinc-800 p-[2px] rounded-lg bg-gradient-to-t from-transparent via-[#379237] to-transparent shadow-[0_0_5px_1px_rgba(63,63,70,0.8)] shadow-slate-600 m-6"
+    class="bg-zinc-800 p-[2px] rounded-lg bg-gradient-to-t from-transparent via-[#379237] to-transparent shadow-[0_0_5px_1px_rgba(63,63,70,0.8)] shadow-slate-600 m-6 relative"
 >
     <div class="bg-zinc-800 p-4">
         <div class="flex flex-col gap-1">
@@ -109,7 +117,14 @@
             {/each}
         </div>
     </div>
+    {#if curHeight < CONSTS.statsMinHeight}
+        <Stats />
+    {/if}
 </div>
+{#if curHeight >= CONSTS.statsMinHeight}
+    <Stats />
+{/if}
+<div>{curHeight}</div>
 
 <style lang="postcss">
 </style>

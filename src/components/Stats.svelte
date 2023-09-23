@@ -13,10 +13,10 @@
 
 {#if $showStats}
     <div
-        class="w-full h-full absolute left-0 top-0 backdrop-blur-sm bg-zinc-800/10"
+        class="w-full h-full absolute left-0 top-0 backdrop-blur-sm bg-zinc-800/10 customheight:hidden"
     />
     <div
-        class="bg-zinc-800 rounded-lg flex flex-col justify-center items-center p-4 gap-2 text border-black border shadow-[inset_0_2px_0_0_rgba(63,63,70,0.8)] w-64 h-60 text-zinc-200 absolute left-0 right-0 mx-auto my-auto top-0 bottom-0"
+        class="bg-zinc-800 rounded-lg flex flex-col justify-center items-center p-4 gap-2 text border-black border shadow-[inset_0_2px_0_0_rgba(63,63,70,0.8)] w-64 h-60 text-zinc-200 absolute left-0 right-0 mx-auto my-auto top-0 bottom-0 customheight:relative customheight:my-0"
     >
         <div
             on:mousedown={handleClose}
