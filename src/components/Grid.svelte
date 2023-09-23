@@ -124,7 +124,6 @@
 {#if curHeight >= CONSTS.statsMinHeight}
     <Stats />
 {/if}
-<div>{curHeight}</div>
 
 <style lang="postcss">
 </style>
