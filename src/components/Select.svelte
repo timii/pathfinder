@@ -10,6 +10,8 @@
     export let startValue = {};
     export let onChangeCallback = (e: CustomEvent) =>
         console.log("onChangeCallback not defined");
+    export let onFocusCallback = (e: CustomEvent) =>
+        console.log("onFocusCallback not defined");
     export let width = "255px";
 
     let value = startValue;
@@ -19,6 +21,7 @@
     <Select
         {items}
         on:change={onChangeCallback}
+        on:focus={onFocusCallback}
         {disabled}
         bind:value
         showChevron={true}

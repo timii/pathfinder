@@ -4,6 +4,8 @@
     import type { ISelectItem } from "../interfaces/Select";
     import {
         currentGrid,
+        isStartNodeSet,
+        isFinishNodeSet,
         isVisualizing,
         selectedAlgo,
         selectedNodeType,
@@ -16,15 +18,14 @@
         clearGrid();
 
         const currentAlgo = algorithms.find((el) => el.name === $selectedAlgo);
-        console.log("startVisualize -> selectedAlgo:", currentAlgo);
         if (currentAlgo && currentAlgo.functionCallback) {
             currentAlgo.functionCallback($currentGrid);
         }
+
         isVisualizing.set(true);
     }
 
     function clearGrid() {
-        console.log("clearGrid called");
         const grid = $currentGrid;
         if (grid) {
             grid.forEach((row: IField[]) => {
@@ -47,24 +48,17 @@
     });
 
     // initially select first algorithm
-    // TODO: add check later if algorithm is already set in localStorage
-    // TODO: reset to first element
-    let algoStartValue: { label: string; value: string } = mappedAlgos[0];
+    let algoStartValue = mappedAlgos[0];
     selectedAlgo.set(algoStartValue.label);
 
     function algoOnChange(event: CustomEvent) {
-        console.log(
-            "algoOnChange called -> event:",
-            event,
-            "selected:",
-            event.detail.label
-        );
         selectedAlgo.set(event.detail.label);
     }
 
     // array of selectable node types
-    // TODO: add start and finish later on
-    const nodeTypes: ISelectItem[] = [
+    let nodeTypes: ISelectItem[] = [
+        { label: "Start", value: "Start", selectable: !$isStartNodeSet },
+        { label: "Finish", value: "Finish", selectable: !$isFinishNodeSet },
         { label: "Wall", value: "Wall" },
         { label: "Grass", value: "Grass" },
         { label: "Sand", value: "Sand" },
@@ -72,19 +66,28 @@
         { label: "Water", value: "Water" },
     ];
 
-    // initially select wall as node type
-    // TODO: add check later if node type is already set in localStorage
-    let nodeStartValue = nodeTypes[0];
+    console.log("nodeTypes:", nodeTypes);
+
+    // initially select wall node type
+    let nodeStartValue = nodeTypes[2];
     selectedNodeType.set(nodeStartValue.label);
 
     function nodeOnChange(event: CustomEvent) {
-        console.log(
-            "nodeOnChange called -> event:",
-            event,
-            "selected:",
-            event.detail.label
-        );
         selectedNodeType.set(event.detail.label);
+    }
+
+    function nodeOnFocus(event: CustomEvent) {
+        // check if either start or finish node are already set and disable them accordingly
+        nodeTypes[0] = {
+            label: "Start",
+            value: "Start",
+            selectable: !$isStartNodeSet,
+        };
+        nodeTypes[1] = {
+            label: "Finish",
+            value: "Finish",
+            selectable: !$isFinishNodeSet,
+        };
     }
 </script>
 
@@ -100,6 +103,7 @@
         items={nodeTypes}
         startValue={nodeStartValue}
         onChangeCallback={nodeOnChange}
+        onFocusCallback={nodeOnFocus}
         width={"150px"}
     />
     <Button

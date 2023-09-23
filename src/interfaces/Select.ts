@@ -1,1 +1,1 @@
-export interface ISelectItem { label: string; value: string }
+export interface ISelectItem { label: string; value: string, selectable?: boolean }
