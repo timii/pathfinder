@@ -8,10 +8,8 @@
     export let disabled = false;
     export let items: ISelectItem[] = [];
     export let startValue = {};
-    export let onChangeCallback = (e: CustomEvent) =>
-        console.log("onChangeCallback not defined");
-    export let onFocusCallback = (e: CustomEvent) =>
-        console.log("onFocusCallback not defined");
+    export let onChangeCallback = (e: CustomEvent) => {};
+    export let onFocusCallback = (e: CustomEvent) => {};
     export let width = "255px";
 
     let value = startValue;

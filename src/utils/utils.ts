@@ -1,6 +1,7 @@
+import { get } from "svelte/store";
 import type { IField, IFieldProp } from "../interfaces/Field";
 import type { IPosition } from "../interfaces/Position";
-import { currentGrid, fieldsSearched, isVisualizing, pathLength, pathStepCost, showStats } from "../store/store";
+import { currentGrid, fieldsSearched, isVisualizing, isWeightedAlgo, pathLength, pathStepCost, showStats } from "../store/store";
 
 // return the field using its prop name
 export function getFieldByProp(grid: IField[][], property: IFieldProp): IField | undefined {
@@ -199,6 +200,11 @@ export function calculatePathStepCost(grid: IField[][], path: number[]) {
         const field = getFieldById(grid, e)
         cost += field ? field.weight : 0
     })
+
+    // if the used algo is not a weighted one, ignore all weights and just use the path length
+    if (!(get(isWeightedAlgo))) {
+        cost = path.length
+    }
     console.log("total cost:", cost)
 
     // subtract 1 to ignore the cost for the start 

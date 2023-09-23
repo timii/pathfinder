@@ -10,6 +10,7 @@
         selectedAlgo,
         selectedNodeType,
         showStats,
+        isWeightedAlgo,
     } from "../store/store";
     import Button from "./Button.svelte";
     import Select from "./Select.svelte";
@@ -52,7 +53,16 @@
     selectedAlgo.set(algoStartValue.label);
 
     function algoOnChange(event: CustomEvent) {
-        selectedAlgo.set(event.detail.label);
+        const el = event.detail.label;
+
+        // check if the selected algo uses weights for pathfinding
+        isWeightedAlgo.set(
+            el === "Breadth First Search" || el === "Depth First Search"
+                ? false
+                : true
+        );
+
+        selectedAlgo.set(el);
     }
 
     // array of selectable node types
@@ -109,7 +119,7 @@
     <Button
         onClickCallback={startVisualize}
         text={"Visualize"}
-        disabled={$isVisualizing}
+        disabled={$isVisualizing || !$isStartNodeSet || !$isFinishNodeSet}
     />
     <Button
         onClickCallback={clearGrid}

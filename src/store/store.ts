@@ -18,6 +18,7 @@ export const selectedAlgo = createStoreValue("");
 export const isStartNodeSet = createStoreValue(false);
 export const isFinishNodeSet = createStoreValue(false);
 export const isVisualizing = createStoreValue(false);
+export const isWeightedAlgo = createStoreValue(false);
 export const showStats = createStoreValue(false);
 
 export const pathLength = createStoreValue(0);
