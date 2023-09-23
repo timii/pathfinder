@@ -41,12 +41,13 @@
         }
     }
 
+    fields[7][1] = { ...fields[7][1], start: true };
+    fields[3][8] = { ...fields[3][8], finish: true };
+
     // set a fixed start and finsish field
     // fields[2][2] = { ...fields[2][2], start: true };
-    fields[7][1] = { ...fields[7][1], start: true };
     // fields[8][1] = { ...fields[8][1], start: true };
     // fields[8][8] = { ...fields[8][8], finish: true };
-    fields[3][8] = { ...fields[3][8], finish: true };
     // fields[4][6] = { ...fields[4][6], finish: true };
     // fields[1][1] = { ...fields[1][1], searched: true };
     // fields[7][0] = { ...fields[7][0], path: true };

@@ -1,7 +1,12 @@
 <script lang="ts">
     import { afterUpdate, onMount } from "svelte";
     import type { IField, IFieldProp } from "../interfaces/Field";
-    import { currentGrid, selectedNodeType } from "../store/store";
+    import {
+        currentGrid,
+        isFinishNodeSet,
+        isStartNodeSet,
+        selectedNodeType,
+    } from "../store/store";
 
     export let fieldData: IField = {
         id: 0,
@@ -122,6 +127,8 @@
     });
 
     function setFieldColor() {
+        checkStartAndFinish(true);
+
         if (!isFieldColored()) {
             color = nodeColorMap.get("default")!;
         }
@@ -181,7 +188,20 @@
 
     // change a given fieldData prop to a given value
     function changeFieldData(fieldProp: IFieldProp, value: boolean) {
-        fieldData[fieldProp] = value;
+        // if start or finish is already set -> don't set it again
+        if (fieldProp === "start") {
+            if (!$isStartNodeSet) {
+                fieldData[fieldProp] = value;
+            }
+            isStartNodeSet.set(true);
+        } else if (fieldProp === "finish") {
+            if (!$isFinishNodeSet) {
+                fieldData[fieldProp] = value;
+            }
+            isFinishNodeSet.set(true);
+        } else {
+            fieldData[fieldProp] = value;
+        }
 
         // change the weight of the field for given node types
         if (weightedNodesMap.has(fieldProp)) {
@@ -193,6 +213,8 @@
 
     // reset field color to default color
     function resetFieldColor() {
+        checkStartAndFinish(false);
+
         Object.keys(fieldData).forEach((key) => {
             if (
                 key !== "id" &&
@@ -208,6 +230,16 @@
         bgImage = "";
     }
 
+    function checkStartAndFinish(value: boolean) {
+        if (fieldData.start) {
+            isStartNodeSet.set(value);
+        }
+
+        if (fieldData.finish) {
+            isFinishNodeSet.set(value);
+        }
+    }
+
     // check if field has any color currently
     function isFieldColored() {
         return Object.keys(fieldData).some((key) => {
@@ -218,22 +250,21 @@
     function handleClick(event: MouseEvent) {
         // console.log("handleClick called -> event:", event);
         // only handle click if node is not a start or finish node
-        if (!fieldData.start && !fieldData.finish) {
-            // if left mouse button clicked
-            if (event.buttons === 1) {
-                // console.log("left mouse clicked");
-                // if field is already colored -> reset to default color
-                if (isFieldColored()) {
-                    resetFieldColor();
-                }
-                // if field has no color -> color it according to node type
-                else {
-                    const nodeType: string = $selectedNodeType;
-                    const fieldProp = nodeType.toLowerCase() as IFieldProp;
-                    changeFieldData(fieldProp, true);
-                }
+        // if (!fieldData.start && !fieldData.finish) {
+        // if left mouse button clicked
+        if (event.buttons === 1) {
+            // if field is already colored -> reset to default color
+            if (isFieldColored()) {
+                resetFieldColor();
+            }
+            // if field has no color -> color it according to node type
+            else {
+                const nodeType: string = $selectedNodeType;
+                const fieldProp = nodeType.toLowerCase() as IFieldProp;
+                changeFieldData(fieldProp, true);
             }
         }
+        // }
 
         // removed for now because first version has a fixed start and finish node that
         // the user can't change and only place walls. Later version can add feature to let user set
