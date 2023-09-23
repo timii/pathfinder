@@ -11,6 +11,7 @@
         selectedNodeType,
         showStats,
         isWeightedAlgo,
+        showNoPathFound,
     } from "../store/store";
     import Button from "./Button.svelte";
     import Select from "./Select.svelte";
@@ -41,6 +42,7 @@
             currentGrid.set(grid);
         }
         showStats.set(false);
+        showNoPathFound.set(false);
     }
 
     // map algorithms to be able to use in select

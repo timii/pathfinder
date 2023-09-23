@@ -2,7 +2,6 @@
     import Controls from "../components/Controls.svelte";
     import Grid from "../components/Grid.svelte";
     import Headline from "../components/Headline.svelte";
-    import Stats from "../components/Stats.svelte";
 
     // array of all image urls
     $: preloadImageUrls = [
@@ -32,8 +31,6 @@
     <Controls />
 
     <Grid />
-
-    <!-- <Stats /> -->
 </main>
 
 <style lang="postcss">

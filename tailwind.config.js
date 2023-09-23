@@ -5,8 +5,8 @@ export default {
     theme: {
         extend: {},
         screens: {
-            'customheight': { 'raw': `(min-height: ${CONSTS.statsMinHeight}px)` },
-            // => @media (min-height: {CONSTS.statsMinHeight}px) { ... }
+            'customheight': { 'raw': `(min-height: ${CONSTS.infoBoxMinHeight}px)` },
+            // => @media (min-height: {CONSTS.infoBoxMinHeight}px) { ... }
 
             'sm': '640px',
             // => @media (min-width: 640px) { ... }

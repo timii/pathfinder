@@ -1,7 +1,7 @@
 import { get } from "svelte/store";
 import type { IField, IFieldProp } from "../interfaces/Field";
 import type { IPosition } from "../interfaces/Position";
-import { currentGrid, fieldsSearched, isVisualizing, isWeightedAlgo, pathLength, pathStepCost, showStats } from "../store/store";
+import { currentGrid, fieldsSearched, isVisualizing, isWeightedAlgo, pathLength, pathStepCost, showNoPathFound, showStats } from "../store/store";
 
 // return the field using its prop name
 export function getFieldByProp(grid: IField[][], property: IFieldProp): IField | undefined {
@@ -163,10 +163,10 @@ export function getShortestPath(cameFromMap: Map<number, number>, startId: numbe
 
 // draw a given path in a given grid
 export function drawShortestPath(grid: IField[][], path: number[]) {
-    // set fieldSearched for stats
+    // set fieldSearched value for stats
     let fieldsSearchedAmount = 0
     grid.forEach(row => row.forEach(field => {
-        if (field.searched) { fieldsSearchedAmount++ }
+        if (field.searched || field.start || field.finish) { fieldsSearchedAmount++ }
     }))
     fieldsSearched.set(fieldsSearchedAmount)
 
@@ -221,6 +221,7 @@ export function calculateLastDirection(lastField: IField, currentField: IField) 
 // handle the case when no path was found by the algorithm
 export function noPathFound() {
     isVisualizing.set(false)
+    showNoPathFound.set(true)
     console.log("No path between start and finish was found")
 }
 

@@ -3,8 +3,8 @@
     import type { IField } from "../interfaces/Field";
     import { currentGrid } from "../store/store";
     import Field from "./Field.svelte";
-    import Stats from "./Stats.svelte";
     import { CONSTS } from "../utils/consts";
+    import InfoBox from "./InfoBox.svelte";
 
     const fieldObject: IField = {
         id: 0,
@@ -97,7 +97,7 @@
 
     currentGrid.set(fields);
 
-    // keep track of the current height to move the stats window according to the screen height
+    // keep track of the current height to move the info box window according to the screen height
     let curHeight = 0;
 </script>
 
@@ -118,12 +118,12 @@
             {/each}
         </div>
     </div>
-    {#if curHeight < CONSTS.statsMinHeight}
-        <Stats />
+    {#if curHeight < CONSTS.infoBoxMinHeight}
+        <InfoBox />
     {/if}
 </div>
-{#if curHeight >= CONSTS.statsMinHeight}
-    <Stats />
+{#if curHeight >= CONSTS.infoBoxMinHeight}
+    <InfoBox />
 {/if}
 
 <style lang="postcss">
