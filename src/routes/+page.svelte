@@ -16,7 +16,7 @@
     ];
 </script>
 
-<!-- insert a link for eac image into the head and preload it as soon as the site loads -->
+<!-- insert a link for each image into the head and preload it as soon as the site loads to avoid blank spaces while icons are not loaded yet -->
 <svelte:head>
     {#each preloadImageUrls as image}
         <link rel="preload" as="image" href={image} />

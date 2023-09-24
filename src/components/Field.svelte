@@ -50,46 +50,6 @@
     let startOrFinishNode = fieldData.start || fieldData.finish;
     let cursorType = startOrFinishNode ? "default" : "pointer";
 
-    // let nodeType = "";
-    // let nodeSet =
-    //     fieldData.start ||
-    //     fieldData.finish ||
-    //     fieldData.searched ||
-    //     fieldData.wall;
-    // TODO: set dynamic maxRow and maxCol and remove hardcoded 9
-    // let borderField = {
-    //     topBorder: firstIndex === 0,
-    //     rightBorder: secondIndex === 9,
-    //     bottomBorder: firstIndex === 9,
-    //     leftBorder: secondIndex === 0,
-    // };
-
-    // set correct border widths for fields at the edges of the grid
-    const getBorderStyle = (val: boolean, styleName: string) =>
-        val ? styleName + ":2px" : styleName + ":1px";
-    // const fieldBorderStyles = `
-    // ${getBorderStyle(borderField.topBorder, "border-top-width")};
-    // ${getBorderStyle(borderField.rightBorder, "border-right-width")};
-    // ${getBorderStyle(borderField.bottomBorder, "border-bottom-width")};
-    // ${getBorderStyle(borderField.leftBorder, "border-left-width")};`;
-    // console.log("field -> fieldBorderStyles:", fieldBorderStyles);
-
-    // console.log(
-    //     "fieldData -> start:",
-    //     fieldData.start,
-    //     "finish:",
-    //     fieldData.finish,
-    //     "wall:",
-    //     fieldData.wall,
-    //     "searched:",
-    //     fieldData.searched,
-    //     "firstIndex:",
-    //     firstIndex,
-    //     "secondIndex:",
-    //     secondIndex,
-    //     "\n----------------------------------------------------------------"
-    // );
-
     // get background gradient styles using the truthy field data properties and re-run this function every time one of the values changes
     $: getBackgroundGradient = () => {
         if (fieldData.path) {
@@ -118,7 +78,6 @@
     };
 
     afterUpdate(() => {
-        // console.log("afterUpdate called -> fieldData:", fieldData);
         setFieldColor();
     });
 
@@ -166,15 +125,12 @@
                 )
             ) {
                 color = nodeColorMap.get("path")!;
-                // color = nodeColorMap.get("path")!;
-                // bgImage = "";
             }
         }
     }
 
     // write the grid with the changed field into the store
     function setGrid(newFieldData: IField) {
-        // console.log("setGrid -> x:", fieldData.x, fieldData.y, newFieldData);
         const grid: IField[][] = $currentGrid;
         const gridField = grid[fieldData.y][fieldData.x];
 
@@ -248,9 +204,6 @@
     }
 
     function handleClick(event: MouseEvent) {
-        // console.log("handleClick called -> event:", event);
-        // only handle click if node is not a start or finish node
-        // if (!fieldData.start && !fieldData.finish) {
         // if left mouse button clicked
         if (event.buttons === 1) {
             // if field is already colored -> reset to default color
@@ -264,54 +217,6 @@
                 changeFieldData(fieldProp, true);
             }
         }
-        // }
-
-        // removed for now because first version has a fixed start and finish node that
-        // the user can't change and only place walls. Later version can add feature to let user set
-        // start and finish block
-        // if (color !== "white") {
-        //     console.log("in if -> color:", color);
-        //     color = "white";
-        //     nodeSet = !nodeSet;
-        //     // Set all fieldData to false when clicked again
-        //     Object.keys(fieldData).forEach((key) => {
-        //         fieldData[key as IFieldProp] = false;
-        //     });
-        //     // And set color of field to new color
-        //     color = nodeColorMap.get(nodeType)
-        //         ? nodeColorMap.get(nodeType)!
-        //         : "white";
-        //     console.log(
-        //         "handleClick called after:",
-        //         fieldData,
-        //         "selectedNodeType:",
-        //         nodeType,
-        //         "color",
-        //         nodeColorMap.get(nodeType)
-        //     );
-        // } else {
-        //     console.log("in else -> color:", color);
-        //     nodeSet = !nodeSet;
-        //     nodeType = $selectedNodeType;
-        //     // Dynamically set prop value to true
-        //     fieldData[nodeType as IFieldProp] = true;
-        //     console.log(
-        //         "handleClick called after:",
-        //         fieldData,
-        //         "selectedNodeType:",
-        //         nodeType,
-        //         "color",
-        //         nodeColorMap.get(nodeType)
-        //     );
-        //     // Object.keys(fieldData).forEach((key) => {
-        //     //     console.log(node)
-        //     //     fieldData[key as IFieldProp] = nodeType === key ? true : false;
-        //     // });
-        //     color = nodeColorMap.get(nodeType)
-        //         ? nodeColorMap.get(nodeType)!
-        //         : "white";
-        // }
-        // setStoreValue();
     }
 
     // handle dragging mouse over multiple fields
@@ -319,11 +224,9 @@
         if (!fieldData.start && !fieldData.finish) {
             // if dragging over fields with left mouse -> color field according to selected node type
             if (event.buttons === 1) {
-                console.log("mouse enter with left click");
                 // color = nodeColorMap.get("wall")!;
                 const nodeType: string = $selectedNodeType;
                 const fieldProp = nodeType.toLowerCase() as IFieldProp;
-                console.log("selected node type:", fieldProp);
                 changeFieldData(fieldProp, true);
             }
         }
@@ -331,41 +234,8 @@
 
     // avoid opening context menu when right clicking on node
     function handleContextmenu(event: MouseEvent) {
-        console.log("handleContextmenu -> event:", event);
         event.preventDefault();
     }
-
-    // function setStoreValue() {
-    //     console.log(
-    //         "setStoreValue before -> nodeType:",
-    //         $selectedNodeType,
-    //         typeof $selectedNodeType,
-    //         "isStartNodeSet:",
-    //         $isStartNodeSet,
-    //         "isFinishNodeSet:",
-    //         $isFinishNodeSet
-    //     );
-
-    //     switch ($selectedNodeType) {
-    //         case "start":
-    //             isStartNodeSet.set(nodeSet);
-    //             break;
-    //         case "finish":
-    //             isFinishNodeSet.set(nodeSet);
-    //             break;
-    //         default:
-    //             break;
-    //     }
-
-    //     console.log(
-    //         "setStoreValue after -> nodeType:",
-    //         $selectedNodeType,
-    //         "isStartNodeSet:",
-    //         $isStartNodeSet,
-    //         "isFinishNodeSet:",
-    //         $isFinishNodeSet
-    //     );
-    // }
 </script>
 
 <div

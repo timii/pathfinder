@@ -3,9 +3,8 @@ import type { IField, IFieldProp } from "../interfaces/Field";
 import type { IPosition } from "../interfaces/Position";
 import { currentGrid, fieldsSearched, isVisualizing, isWeightedAlgo, pathLength, pathStepCost, showNoPathFound, showStats } from "../store/store";
 
-// return the field using its prop name
+// find a field using its prop name
 export function getFieldByProp(grid: IField[][], property: IFieldProp): IField | undefined {
-    // console.log("getFieldPosition -> grid:", grid)
     for (var i = 0; i < grid.length; i++) {
         var field = grid[i].find(field => field[property] === true);
         if (field) {
@@ -15,7 +14,7 @@ export function getFieldByProp(grid: IField[][], property: IFieldProp): IField |
     return undefined
 }
 
-// return the field using its id
+// find a field using its id
 export function getFieldById(grid: IField[][], id: number) {
     for (var i = 0; i < grid.length; i++) {
         var field = grid[i].find(field => field.id === id);
@@ -60,9 +59,7 @@ export function getAllAdjacentFields(grid: IField[][], x: number, y: number) {
 // check if a field at given indeces exists and if it's empty 
 export function isFieldEmtpyAndExist(grid: IField[][], firstIndex: number, secondIndex: number, includeStartAndFinish?: boolean, includeOnlyStart?: boolean) {
     const field = grid[firstIndex][secondIndex]
-    // console.log("isFieldEmtpyAndExist -> el:", field, firstIndex, secondIndex)
     if (field) {
-        // console.log("field.searched || field.start || field.finish || field.path:", field.searched || field.start || field.finish || field.path)
         if (includeStartAndFinish) {
             return !(field.searched || field.path || field.wall || field.start || field.finish)
         } else if (includeOnlyStart) {
@@ -84,7 +81,7 @@ export function isEveryFieldSearched(grid: IField[][]) {
     return isGridFilled
 }
 
-// function for just depth first search algorithm to get the next field given a grid and two indeces
+// just for depth first search algorithm to get the next field given a grid and two indeces
 export function getNextField(grid: IField[][], firstIndex: number, secondIndex: number, rowMax: number, colMax: number, lastDirection: IPosition) {
 
     // try to get to first row -> y index schould be 0 && top right element is empty
@@ -144,11 +141,9 @@ export function isMoveToFieldPossible(grid: IField[][], neighbourIndeces: IPosit
 // get the shortest path using a given map of ids
 export function getShortestPath(cameFromMap: Map<number, number>, startId: number, finishId: number, amountOfFields: number) {
     let current = finishId
-    console.log("before while -> current:", current, "cameFromMap:", cameFromMap, "amountOfFields:", amountOfFields)
     let path: number[] = []
     while (current !== startId && path.length < amountOfFields) {
         path.push(current)
-        console.log("in while -> path:", path, "cameFromMap.get(current):", cameFromMap.get(current))
         if (cameFromMap.has(current)) {
             current = cameFromMap.get(current)!
         }
@@ -184,7 +179,6 @@ export function drawShortestPath(grid: IField[][], path: number[]) {
                 }
             } else {
                 isVisualizing.set(false)
-                console.log("clear path interval")
                 clearInterval(pathInterval)
                 showStats.set(true)
             }
@@ -205,7 +199,6 @@ export function calculatePathStepCost(grid: IField[][], path: number[]) {
     if (!(get(isWeightedAlgo))) {
         cost = path.length
     }
-    console.log("total cost:", cost)
 
     // subtract 1 to ignore the cost for the start 
     pathStepCost.set(cost - 1)
@@ -222,7 +215,6 @@ export function calculateLastDirection(lastField: IField, currentField: IField) 
 export function noPathFound() {
     isVisualizing.set(false)
     showNoPathFound.set(true)
-    console.log("No path between start and finish was found")
 }
 
 // clean up and handle path when algorithm is done searching

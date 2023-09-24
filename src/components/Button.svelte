@@ -1,8 +1,5 @@
 <script lang="ts">
-    import { isVisualizing } from "../store/store";
-
-    export let onClickCallback = () =>
-        console.log("onClickCallback not defined");
+    export let onClickCallback = () => {};
 
     export let text = "";
     export let disabled = false;

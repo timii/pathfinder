@@ -87,8 +87,6 @@
         { label: "Water", value: "Water" },
     ];
 
-    console.log("nodeTypes:", nodeTypes);
-
     // initially select wall node type
     let nodeStartValue = nodeTypes[2];
     selectedNodeType.set(nodeStartValue.label);

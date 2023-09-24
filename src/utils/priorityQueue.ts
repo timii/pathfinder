@@ -1,5 +1,6 @@
 /**
  * naive implementation of a priority queue by using a list sorted by priority
+ * reference: https://github.com/willybrauner/dijkstra-algorithm/blob/main/src/priorityQueueMin.ts
  */
 
 import type { IField } from "../interfaces/Field"

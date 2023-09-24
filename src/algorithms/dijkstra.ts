@@ -11,7 +11,6 @@ export function dijkstra(grid: IField[][]) {
     const colMax = grid.length
     const startNode = getFieldByProp(grid, "start")
     const finishNode = getFieldByProp(grid, "finish")
-    let finalCost = 0
 
     if (startNode && finishNode) {
 
