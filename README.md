@@ -1,6 +1,6 @@
 # Pathfinder
 
-Pathfinder aims to visualize different pathfinding visualizations, refresh my knowledge and learn about new pathfinding algorithms I haven't used yet.
+Pathfinder aims to visualize different pathfinding algorithms, refresh my knowledge and learn about new pathfinding algorithms I haven't used yet.
 
 Try it out here: [timii.github.io/pathfinder/](https://timii.github.io/pathfinder/)
 
