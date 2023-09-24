@@ -1,38 +1,26 @@
-# create-svelte
+# Pathfinder
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+The Pathinder aims to visualize different pathfinding visualizations and to refresh my knowledge and learn about new pathfinding algorithms I haven't used yet.
 
-## Creating a project
+Try it out here: [timii.github.io/pathfinder/](https://timii.github.io/pathfinder/)
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Currently available algorithms:
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+- Unweighted
+    - Breadth First Search
+    - Depth First Search
+- Weighted
+    - Dijkstra's Algorithm
+    - A*
+    - Greedy Best First Search
 
-# create a new project in my-app
-npm create svelte@latest my-app
+## Build it yourself
+
+```shell
+git clone https://github.com/timii/pathfinder.git
+cd pathfinder
 ```
 
-## Developing
+Open index.html in your web browser to launch the visualizer.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+Explore, experiment, and learn about pathfinding algorithms!
