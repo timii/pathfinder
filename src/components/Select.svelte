@@ -10,6 +10,9 @@
     export let startValue = {};
     export let onChangeCallback = (e: CustomEvent) => {};
     export let onFocusCallback = (e: CustomEvent) => {};
+    export let groupBy = (item: ISelectItem): string | undefined => {
+        return undefined;
+    };
     export let width = "255px";
 
     let value = startValue;
@@ -21,12 +24,14 @@
         on:change={onChangeCallback}
         on:focus={onFocusCallback}
         {disabled}
+        {groupBy}
         bind:value
         showChevron={true}
         clearable={false}
         searchable={false}
         --background="#27272a"
         --list-background="#27272a"
+        --list-max-height="300px"
         --width={width}
         --border="1px solid black"
         --border-hover="1px solid black"

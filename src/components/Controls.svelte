@@ -45,10 +45,23 @@
         showNoPathFound.set(false);
     }
 
+    function isAlgoWeighted(algo: string) {
+        return !(
+            algo === "Breadth First Search" || algo === "Depth First Search"
+        );
+    }
+
     // map algorithms to be able to use in select
     const mappedAlgos: ISelectItem[] = algorithms.map((el) => {
-        return { label: el.name, value: el.name };
+        return {
+            label: el.name,
+            value: el.name,
+            group: isAlgoWeighted(el.name) ? "Weighted" : "Unweighted",
+        };
     });
+
+    // create a function that groups the algorithms
+    const groupAlgos = (item: ISelectItem) => item.group;
 
     // initially select first algorithm
     let algoStartValue = mappedAlgos[0];
@@ -58,11 +71,7 @@
         const el = event.detail.label;
 
         // check if the selected algo uses weights for pathfinding
-        isWeightedAlgo.set(
-            el === "Breadth First Search" || el === "Depth First Search"
-                ? false
-                : true
-        );
+        isWeightedAlgo.set(isAlgoWeighted(el));
 
         selectedAlgo.set(el);
     }
@@ -109,6 +118,7 @@
         items={mappedAlgos}
         startValue={algoStartValue}
         onChangeCallback={algoOnChange}
+        groupBy={groupAlgos}
     />
     <Select
         disabled={$isVisualizing}
