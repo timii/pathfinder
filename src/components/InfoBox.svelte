@@ -11,6 +11,8 @@
         showStats.set(false);
         showNoPathFound.set(false);
     }
+
+    const closeIcon = "close.png";
 </script>
 
 {#if $showStats || $showNoPathFound}
@@ -22,7 +24,8 @@
     >
         <div
             on:mousedown={handleClose}
-            class="absolute top-3 right-3 w-6 h-6 bg-[url('close.png')] bg-contain bg-center cursor-pointer hover:bg-zinc-700 duration-200 rounded"
+            class="absolute top-3 right-3 w-6 h-6 bg-contain bg-center cursor-pointer hover:bg-zinc-700 duration-200 rounded"
+            style="background-image: url({closeIcon});"
         />
 
         {#if $showStats}
