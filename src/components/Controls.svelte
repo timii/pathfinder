@@ -80,19 +80,19 @@
     let nodeTypes: ISelectItem[] = [
         { label: "Start", value: "Start", selectable: !$isStartNodeSet },
         { label: "Finish", value: "Finish", selectable: !$isFinishNodeSet },
-        { label: "Wall", value: "Wall" },
-        { label: "Grass", value: "Grass" },
-        { label: "Sand", value: "Sand" },
-        { label: "Snow", value: "Snow" },
-        { label: "Water", value: "Water" },
+        { label: "Wall [∞]", value: "Wall" },
+        { label: "Grass [5]", value: "Grass" },
+        { label: "Sand [10]", value: "Sand" },
+        { label: "Snow [25]", value: "Snow" },
+        { label: "Water [50]", value: "Water" },
     ];
 
     // initially select wall node type
     let nodeStartValue = nodeTypes[2];
-    selectedNodeType.set(nodeStartValue.label);
+    selectedNodeType.set(nodeStartValue.value);
 
     function nodeOnChange(event: CustomEvent) {
-        selectedNodeType.set(event.detail.label);
+        selectedNodeType.set(event.detail.value);
     }
 
     function nodeOnFocus(event: CustomEvent) {
