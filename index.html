@@ -9,13 +9,13 @@
 	<meta http-equiv="content-security-policy" content="">
 		<link href="./app/immutable/assets/0.adc408a9.css" rel="stylesheet">
 		<link href="./app/immutable/assets/2.9db41f67.css" rel="stylesheet">
-		<link rel="modulepreload" href="./app/immutable/entry/start.717931d1.js">
+		<link rel="modulepreload" href="./app/immutable/entry/start.1c940dab.js">
 		<link rel="modulepreload" href="./app/immutable/chunks/index.b4ceed76.js">
-		<link rel="modulepreload" href="./app/immutable/chunks/singletons.89f079af.js">
+		<link rel="modulepreload" href="./app/immutable/chunks/singletons.ef961255.js">
 		<link rel="modulepreload" href="./app/immutable/chunks/index.11f175eb.js">
-		<link rel="modulepreload" href="./app/immutable/entry/app.c5d43808.js">
+		<link rel="modulepreload" href="./app/immutable/entry/app.4839e3f2.js">
 		<link rel="modulepreload" href="./app/immutable/nodes/0.3ed2f574.js">
-		<link rel="modulepreload" href="./app/immutable/nodes/2.ef7d3c3a.js"><!-- HEAD_svelte-6vf7l6_START --><link rel="preload" as="image" href="close.png" class="svelte-7h6iiz"><link rel="preload" as="image" href="goal.png" class="svelte-7h6iiz"><link rel="preload" as="image" href="grass.png" class="svelte-7h6iiz"><link rel="preload" as="image" href="sand.png" class="svelte-7h6iiz"><link rel="preload" as="image" href="snow.png" class="svelte-7h6iiz"><link rel="preload" as="image" href="start.png" class="svelte-7h6iiz"><link rel="preload" as="image" href="wall.png" class="svelte-7h6iiz"><link rel="preload" as="image" href="water.png" class="svelte-7h6iiz"><!-- HEAD_svelte-6vf7l6_END -->
+		<link rel="modulepreload" href="./app/immutable/nodes/2.0332f49c.js"><!-- HEAD_svelte-6vf7l6_START --><link rel="preload" as="image" href="close.png" class="svelte-7h6iiz"><link rel="preload" as="image" href="goal.png" class="svelte-7h6iiz"><link rel="preload" as="image" href="grass.png" class="svelte-7h6iiz"><link rel="preload" as="image" href="sand.png" class="svelte-7h6iiz"><link rel="preload" as="image" href="snow.png" class="svelte-7h6iiz"><link rel="preload" as="image" href="start.png" class="svelte-7h6iiz"><link rel="preload" as="image" href="wall.png" class="svelte-7h6iiz"><link rel="preload" as="image" href="water.png" class="svelte-7h6iiz"><!-- HEAD_svelte-6vf7l6_END -->
 </head>
 
 <body data-sveltekit-preload-data="hover">
@@ -70,7 +70,7 @@
     <div class="prepend svelte-apvs86"></div>
 
     <div class="value-container svelte-apvs86"><div class="selected-item svelte-apvs86">
-                        Wall
+                        Wall [∞]
                     </div>
 
         <input readonly autocapitalize="none" autocomplete="off" autocorrect="off" spellcheck="false" tabindex="0" type="text" aria-autocomplete="list" placeholder="" style="cursor: pointer;" class="svelte-apvs86" value=""></div>
@@ -88,7 +88,7 @@
                 </div></div>
 
     
-        <input type="hidden" value="{&quot;label&quot;:&quot;Wall&quot;,&quot;value&quot;:&quot;Wall&quot;}" class="svelte-apvs86">
+        <input type="hidden" value="{&quot;label&quot;:&quot;Wall [∞]&quot;,&quot;value&quot;:&quot;Wall&quot;}" class="svelte-apvs86">
     
 
     
@@ -120,7 +120,7 @@
 			
 			<script>
 				{
-					__sveltekit_ov4o5w = {
+					__sveltekit_11yeu0v = {
 						assets: "/pathfinder",
 						base: new URL(".", location).pathname.slice(0, -1),
 						env: {}
@@ -131,8 +131,8 @@
 					const data = [null,null];
 
 					Promise.all([
-						import("./app/immutable/entry/start.717931d1.js"),
-						import("./app/immutable/entry/app.c5d43808.js")
+						import("./app/immutable/entry/start.1c940dab.js"),
+						import("./app/immutable/entry/app.4839e3f2.js")
 					]).then(([kit, app]) => {
 						kit.start(app, element, {
 							node_ids: [0, 2],
